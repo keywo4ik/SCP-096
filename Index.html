@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SCP-096 — Лабиринт (с вечерней прогулкой)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
+  canvas { display: block; }
+  #ui { position: fixed; inset: 0; pointer-events: none; font-family: monospace; color: #fff; }
+  #hint {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.55); padding: 6px 12px; border-radius: 6px;
+    font-size: 12px; text-align: center; opacity: 0.9; max-width: 90vw;
+  }
+  #status {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,0.55); padding: 6px 10px; border-radius: 6px; font-size: 13px;
+  }
+  #joy {
+    position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px;
+    border-radius: 50%; background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3); pointer-events: auto;
+  }
+  #joyKnob {
+    position: absolute; width: 50px; height: 50px; border-radius: 50%;
+    background: rgba(255,255,255,0.5); left: 35px; top: 35px;
+  }
+  #minimap {
+    position: absolute; top: 50px; right: 10px;
+    width: 150px; height: 150px;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 6px;
+    background: rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+  #muteBtn {
+    position: absolute; top: 208px; right: 10px;
+    width: 150px; height: 34px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff; font-family: monospace; font-size: 13px;
+    border-radius: 6px; pointer-events: auto; cursor: pointer;
+  }
+  #muteBtn:active { background: rgba(60,60,60,0.8); }
+  #overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; font-family: monospace; text-align: center; padding: 20px;
+    pointer-events: auto; z-index: 10;
+  }
+  #overlay h1 { font-size: 22px; margin-bottom: 12px; color: #ff4444; }
+  #overlay p { font-size: 14px; margin-bottom: 8px; line-height: 1.5; max-width: 520px; }
+  #overlay button {
+    margin-top: 18px; padding: 12px 28px; font-size: 16px; font-family: monospace;
+    background: #ff4444; color: #fff; border: none; border-radius: 8px; cursor: pointer;
+  }
+  #overlay button:active { background: #cc0000; }
+  #flash { position: fixed; inset: 0; background: #ff0000; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 5; }
+  #winFlash { position: fixed; inset: 0; background: #00ff88; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 5; }
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <div id="status">SCP-096: спокоен</div>
+  <div id="hint">Джойстик — движение · Свайп справа — обзор · Смотрите на миникарту</div>
+  <div id="joy"><div id="joyKnob"></div></div>
+  <canvas id="minimap"></canvas>
+  <button id="muteBtn">🔊 Звук: ВКЛ</button>
+</div>
+<div id="flash"></div>
+<div id="winFlash"></div>
+
+<div id="overlay">
+  <h1>SCP-096 — ЛАБИРИНТ</h1>
+  <p>Вы в бетонном лабиринте. Где-то здесь SCP-096. <b>Не смотрите на него.</b></p>
+  <p>Найдите <b style="color:#ff4444">КРАСНЫЙ</b>, <b style="color:#4488ff">СИНИЙ</b> или <b style="color:#44ff88">ЗЕЛЁНЫЙ</b> портал — они ведут прямо к выходу.</p>
+  <p>Другие цвета — ложные, телепортируют в случайное место.</p>
+  <p>В правом верхнем углу карты — бетонная вышка с мигающим маяком. Выход (зелёное свечение) — рядом с ней.</p>
+  <button id="startBtn">НАЧАТЬ</button>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ================== НАСТРОЙКИ ==================
+const MAZE_SIZE = 21;
+const CELL = 4;
+const WALL_H = 4;
+const PLAYER_R = 0.6;
+const PLAYER_SPEED = 7.5;
+const SCP_SPEED_IDLE = 1.2;
+const SCP_SPEED_RAGE = 9.0;
+const LOOK_TRIGGER_DIST = 30;
+const START_POS = new THREE.Vector3(0, 1.7, 0);
+
+// ================== ЗВУК ==================
+let audioCtx = null, masterGain = null, muted = false;
+let ambientNodes = null;
+let ambientDucked = false;
+
+function initAudio() {
+  if (audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.6;
+    masterGain.connect(audioCtx.destination);
+    startAmbient();
+  } catch (e) { console.warn('Audio init failed', e); }
+}
+
+function startAmbient() {
+  if (!audioCtx) return;
+
+  // ВЕТЕР: бурый шум + медленный LFO
+  const bufSize = audioCtx.sampleRate * 4;
+  const noiseBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+  const nd = noiseBuf.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < bufSize; i++) {
+    const white = Math.random() * 2 - 1;
+    last = (last + 0.02 * white) / 1.02;
+    nd[i] = last * 3.5;
+  }
+  const noiseSrc = audioCtx.createBufferSource();
+  noiseSrc.buffer = noiseBuf;
+  noiseSrc.loop = true;
+
+  const windFilter = audioCtx.createBiquadFilter();
+  windFilter.type = 'lowpass';
+  windFilter.frequency.value = 600;
+  windFilter.Q.value = 0.7;
+
+  const windGain = audioCtx.createGain();
+  windGain.gain.value = 0.08;
+
+  const windLfo = audioCtx.createOscillator();
+  windLfo.frequency.value = 0.08;
+  const windLfoGain = audioCtx.createGain();
+  windLfoGain.gain.value = 300;
+  windLfo.connect(windLfoGain);
+  windLfoGain.connect(windFilter.frequency);
+
+  noiseSrc.connect(windFilter);
+  windFilter.connect(windGain);
+  windGain.connect(masterGain);
+  noiseSrc.start();
+  windLfo.start();
+
+  // ТЁПЛЫЙ ПЭД: Dm(add9) — D3, F3, A3, E4
+  const padNotes = [146.83, 174.61, 220.00, 329.63];
+  const padGain = audioCtx.createGain();
+  padGain.gain.value = 0;
+  padGain.connect(masterGain);
+
+  padNotes.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    osc.type = i % 2 === 0 ? 'sine' : 'triangle';
+    osc.frequency.value = freq;
+    osc.detune.value = (i - 1.5) * 5;
+
+    const g = audioCtx.createGain();
+    g.gain.value = 0.12;
+
+    const vib = audioCtx.createOscillator();
+    vib.frequency.value = 0.15 + i * 0.03;
+    const vibGain = audioCtx.createGain();
+    vibGain.gain.value = 1.5;
+    vib.connect(vibGain);
+    vibGain.connect(osc.frequency);
+    vib.start();
+
+    osc.connect(g);
+    g.connect(padGain);
+    osc.start();
+  });
+
+  const t0 = audioCtx.currentTime;
+  padGain.gain.setValueAtTime(0, t0);
+  padGain.gain.linearRampToValueAtTime(0.3, t0 + 6);
+
+  setInterval(() => {
+    if (!audioCtx || muted || ambientDucked) return;
+    const now = audioCtx.currentTime;
+    padGain.gain.cancelScheduledValues(now);
+    padGain.gain.linearRampToValueAtTime(0.3 + Math.random() * 0.15, now + 4);
+    padGain.gain.linearRampToValueAtTime(0.25, now + 10);
+  }, 12000);
+
+  // ДАЛЬНИЙ КОЛОКОЛ
+  const playBell = () => {
+    if (!audioCtx || muted) return;
+    const now = audioCtx.currentTime;
+    const freq = [523.25, 587.33, 659.25, 783.99][Math.floor(Math.random() * 4)];
+
+    const o1 = audioCtx.createOscillator();
+    o1.type = 'sine'; o1.frequency.value = freq;
+    const g1 = audioCtx.createGain();
+    g1.gain.setValueAtTime(0, now);
+    g1.gain.linearRampToValueAtTime(0.06, now + 0.05);
+    g1.gain.exponentialRampToValueAtTime(0.001, now + 3);
+    o1.connect(g1); g1.connect(masterGain);
+    o1.start(now); o1.stop(now + 3);
+
+    const o2 = audioCtx.createOscillator();
+    o2.type = 'sine'; o2.frequency.value = freq * 2.01;
+    const g2 = audioCtx.createGain();
+    g2.gain.setValueAtTime(0, now);
+    g2.gain.linearRampToValueAtTime(0.02, now + 0.05);
+    g2.gain.exponentialRampToValueAtTime(0.001, now + 2);
+    o2.connect(g2); g2.connect(masterGain);
+    o2.start(now); o2.stop(now + 2);
+  };
+
+  // ПТИЦЫ
+  const playChirp = () => {
+    if (!audioCtx || muted) return;
+    const now = audioCtx.currentTime;
+    const base = 1800 + Math.random() * 1200;
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(base, now);
+    osc.frequency.exponentialRampToValueAtTime(base * 1.5, now + 0.08);
+    osc.frequency.exponentialRampToValueAtTime(base * 0.8, now + 0.15);
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.03, now + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    osc.connect(g); g.connect(masterGain);
+    osc.start(now); osc.stop(now + 0.2);
+  };
+
+  setInterval(() => { if (Math.random() < 0.6) playBell(); }, 15000);
+  setInterval(() => { if (Math.random() < 0.7) playChirp(); }, 8000);
+
+  ambientNodes = { padGain, windGain };
+}
+
+function setAmbientDucked(ducked) {
+  if (!audioCtx || !ambientNodes) return;
+  ambientDucked = ducked;
+  const now = audioCtx.currentTime;
+  ambientNodes.padGain.gain.cancelScheduledValues(now);
+  if (ducked) {
+    ambientNodes.padGain.gain.setTargetAtTime(0.08, now, 0.5);
+    ambientNodes.windGain.gain.setTargetAtTime(0.16, now, 0.5);
+  } else {
+    ambientNodes.padGain.gain.setTargetAtTime(0.3, now, 1.5);
+    ambientNodes.windGain.gain.setTargetAtTime(0.08, now, 1.5);
+  }
+}
+
+function playScream() {
+  if (!audioCtx || muted) return;
+  const now = audioCtx.currentTime;
+  const dur = 2.2;
+  const osc1 = audioCtx.createOscillator();
+  osc1.type = 'sawtooth';
+  osc1.frequency.setValueAtTime(90, now);
+  osc1.frequency.exponentialRampToValueAtTime(240, now + 0.3);
+  osc1.frequency.exponentialRampToValueAtTime(70, now + dur);
+  const osc2 = audioCtx.createOscillator();
+  osc2.type = 'square';
+  osc2.frequency.setValueAtTime(140, now);
+  osc2.frequency.exponentialRampToValueAtTime(350, now + 0.3);
+  osc2.frequency.exponentialRampToValueAtTime(100, now + dur);
+  const noiseBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
+  const nd2 = noiseBuf.getChannelData(0);
+  for (let i = 0; i < nd2.length; i++) nd2[i] = Math.random() * 2 - 1;
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = noiseBuf;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass'; filter.frequency.value = 900; filter.Q.value = 1.8;
+  const dist = audioCtx.createWaveShaper();
+  const curve = new Float32Array(256);
+  for (let i = 0; i < 256; i++) {
+    const x = i / 128 - 1;
+    curve[i] = Math.tanh(x * 6);
+  }
+  dist.curve = curve;
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.55, now + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.35, now + 0.9);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+  osc1.connect(dist); osc2.connect(dist);
+  noise.connect(filter); filter.connect(dist);
+  dist.connect(gain); gain.connect(masterGain);
+  osc1.start(now); osc1.stop(now + dur);
+  osc2.start(now); osc2.stop(now + dur);
+  noise.start(now); noise.stop(now + dur);
+}
+
+function playPortalSound(correct) {
+  if (!audioCtx || muted) return;
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  if (correct) {
+    osc.frequency.setValueAtTime(450, now);
+    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.45);
+  } else {
+    osc.frequency.setValueAtTime(700, now);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.45);
+  }
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.25, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+  osc.connect(g); g.connect(masterGain);
+  osc.start(now); osc.stop(now + 0.45);
+}
+
+function playWinSound() {
+  if (!audioCtx || muted) return;
+  const now = audioCtx.currentTime;
+  [523, 659, 784, 1047].forEach((f, i) => {
+    const o = audioCtx.createOscillator();
+    o.type = 'triangle'; o.frequency.value = f;
+    const g = audioCtx.createGain();
+    const t = now + i * 0.14;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.22, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    o.connect(g); g.connect(masterGain);
+    o.start(t); o.stop(t + 0.5);
+  });
+}
+
+function playDeathSound() {
+  if (!audioCtx || muted) return;
+  const now = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  o.type = 'sawtooth';
+  o.frequency.setValueAtTime(200, now);
+  o.frequency.exponentialRampToValueAtTime(40, now + 1.2);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.4, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + 1.3);
+  o.connect(g); g.connect(masterGain);
+  o.start(now); o.stop(now + 1.3);
+}
+
+function setMuted(m) {
+  muted = m;
+  if (masterGain) masterGain.gain.value = m ? 0 : 0.6;
+  const b = document.getElementById('muteBtn');
+  b.textContent = m ? '🔇 Звук: ВЫКЛ' : '🔊 Звук: ВКЛ';
+}
+
+document.getElementById('muteBtn').addEventListener('click', () => setMuted(!muted));
+
+// ================== СЦЕНА ==================
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a0f);
+scene.fog = new THREE.Fog(0x0a0a0f, 10, 50);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+scene.add(new THREE.AmbientLight(0x404050, 1.2));
+const playerLight = new THREE.PointLight(0xffffee, 1.5, 18, 2);
+camera.add(playerLight);
+scene.add(camera);
+
+const moon = new THREE.DirectionalLight(0x8899bb, 0.6);
+moon.position.set(20, 40, 20);
+moon.castShadow = true;
+moon.shadow.mapSize.set(1024, 1024);
+moon.shadow.camera.left = -60;
+moon.shadow.camera.right = 60;
+moon.shadow.camera.top = 60;
+moon.shadow.camera.bottom = -60;
+scene.add(moon);
+
+// ================== ЛАБИРИНТ ==================
+function generateMaze(n) {
+  const grid = Array.from({ length: n }, () => Array(n).fill(1));
+  const stack = [[1, 1]];
+  grid[1][1] = 0;
+  const dirs = [[0, 2], [0, -2], [2, 0], [-2, 0]];
+  while (stack.length) {
+    const [x, y] = stack[stack.length - 1];
+    const neighbors = [];
+    for (const [dx, dy] of dirs) {
+      const nx = x + dx, ny = y + dy;
+      if (nx > 0 && nx < n - 1 && ny > 0 && ny < n - 1 && grid[nx][ny] === 1)
+        neighbors.push([nx, ny, dx / 2, dy / 2]);
+    }
+    if (neighbors.length) {
+      const [nx, ny, wx, wy] = neighbors[Math.floor(Math.random() * neighbors.length)];
+      grid[x + wx][y + wy] = 0;
+      grid[nx][ny] = 0;
+      stack.push([nx, ny]);
+    } else stack.pop();
+  }
+  return grid;
+}
+
+const maze = generateMaze(MAZE_SIZE);
+const offset = (MAZE_SIZE * CELL) / 2;
+
+for (let x = MAZE_SIZE - 4; x < MAZE_SIZE; x++)
+  for (let y = MAZE_SIZE - 4; y < MAZE_SIZE; y++)
+    maze[x][y] = 0;
+
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x6b6b6b, roughness: 0.9 });
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 1.0 });
+
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(MAZE_SIZE * CELL, MAZE_SIZE * CELL), floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const wallGeo = new THREE.BoxGeometry(CELL, WALL_H, CELL);
+let wallCount = 0;
+for (let x = 0; x < MAZE_SIZE; x++)
+  for (let y = 0; y < MAZE_SIZE; y++)
+    if (maze[x][y] === 1) wallCount++;
+
+const walls = new THREE.InstancedMesh(wallGeo, wallMat, wallCount);
+walls.castShadow = true; walls.receiveShadow = true;
+const dummy = new THREE.Object3D();
+let wi = 0;
+for (let x = 0; x < MAZE_SIZE; x++)
+  for (let y = 0; y < MAZE_SIZE; y++)
+    if (maze[x][y] === 1) {
+      dummy.position.set(x * CELL - offset + CELL / 2, WALL_H / 2, y * CELL - offset + CELL / 2);
+      dummy.updateMatrix();
+      walls.setMatrixAt(wi++, dummy.matrix);
+    }
+scene.add(walls);
+
+// ================== ВЫШКА ==================
+function cellToWorld(cx, cy) {
+  return new THREE.Vector3(cx * CELL - offset + CELL / 2, 0, cy * CELL - offset + CELL / 2);
+}
+
+const TOWER_CELL = { x: 19, y: 19 };
+const EXIT_CELL  = { x: 17, y: 17 };
+const towerPos = cellToWorld(TOWER_CELL.x, TOWER_CELL.y);
+const exitPos  = cellToWorld(EXIT_CELL.x,  EXIT_CELL.y);
+
+function createTower(px, pz) {
+  const tower = new THREE.Group();
+  const LEG_H = 15;
+  const SPAN = CELL * 1.6;
+  const LEG_W = 0.7;
+
+  const concreteMat  = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, roughness: 0.95 });
+  const darkMat      = new THREE.MeshStandardMaterial({ color: 0x5e5e5e, roughness: 0.95 });
+  const metalMat     = new THREE.MeshStandardMaterial({ color: 0x4a4a4a, roughness: 0.4, metalness: 0.8 });
+  const warnRedMat   = new THREE.MeshStandardMaterial({ color: 0xcc2222, roughness: 0.7 });
+  const warnWhiteMat = new THREE.MeshStandardMaterial({ color: 0xdddddd, roughness: 0.7 });
+  const beaconMat    = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 3 });
+
+  const legs = [
+    [-SPAN/2, -SPAN/2], [SPAN/2, -SPAN/2],
+    [-SPAN/2,  SPAN/2], [SPAN/2,  SPAN/2]
+  ];
+  for (const [lx, lz] of legs) {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(LEG_W, LEG_H, LEG_W), concreteMat);
+    leg.position.set(lx, LEG_H / 2, lz);
+    leg.castShadow = true; leg.receiveShadow = true;
+    tower.add(leg);
+    for (let i = 0; i < 8; i++) {
+      const stripe = new THREE.Mesh(
+        new THREE.BoxGeometry(LEG_W + 0.06, 0.45, LEG_W + 0.06),
+        i % 2 === 0 ? warnRedMat : warnWhiteMat
+      );
+      stripe.position.set(lx, 0.225 + i * 0.45, lz);
+      tower.add(stripe);
+    }
+  }
+
+  const basePlate = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 2, 0.4, SPAN + 2), darkMat);
+  basePlate.position.y = 0.2;
+  basePlate.receiveShadow = true;
+  tower.add(basePlate);
+
+  function addBeam(x1, y1, z1, x2, y2, z2, thickness = 0.14, mat = metalMat) {
+    const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+    const len = Math.hypot(dx, dy, dz);
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(thickness, len, thickness), mat);
+    beam.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2);
+    beam.quaternion.setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      new THREE.Vector3(dx, dy, dz).normalize()
+    );
+    beam.castShadow = true;
+    tower.add(beam);
+  }
+
+  const levels = [5, 10, LEG_H];
+  for (let li = 0; li < levels.length - 1; li++) {
+    const yLow = li === 0 ? 1.5 : levels[li - 1];
+    const yHigh = levels[li];
+    for (let i = 0; i < 4; i++) {
+      const a = legs[i], b = legs[(i + 1) % 4];
+      addBeam(a[0], yHigh, a[1], b[0], yHigh, b[1]);
+      addBeam(a[0], yLow, a[1], b[0], yHigh, b[1]);
+      addBeam(b[0], yLow, b[1], a[0], yHigh, a[1]);
+    }
+  }
+
+  for (const y of levels) {
+    const plat = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 1.2, 0.3, SPAN + 1.2), concreteMat);
+    plat.position.y = y;
+    plat.castShadow = true; plat.receiveShadow = true;
+    tower.add(plat);
+    const railH = 1.1, railInset = (SPAN + 1.2) / 2;
+    for (let i = 0; i < 4; i++) {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 1.2, 0.08, 0.08), metalMat);
+      rail.position.y = y + railH;
+      if (i === 0) rail.position.z = -railInset;
+      if (i === 1) rail.position.z =  railInset;
+      if (i === 2) { rail.rotation.y = Math.PI / 2; rail.position.x = -railInset; }
+      if (i === 3) { rail.rotation.y = Math.PI / 2; rail.position.x =  railInset; }
+      tower.add(rail);
+      for (let j = 0; j < 4; j++) {
+        const t = (j / 3 - 0.5) * (SPAN + 1.2);
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, railH, 0.08), metalMat);
+        if (i === 0) post.position.set(t, y + railH / 2, -railInset);
+        if (i === 1) post.position.set(t, y + railH / 2,  railInset);
+        if (i === 2) post.position.set(-railInset, y + railH / 2, t);
+        if (i === 3) post.position.set( railInset, y + railH / 2, t);
+        tower.add(post);
+      }
+  
