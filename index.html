@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SCP-096 — Лабиринт (с вечерней прогулкой)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SCP-096 — Лабиринт</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
@@ -44,6 +44,20 @@
     border-radius: 6px; pointer-events: auto; cursor: pointer;
   }
   #muteBtn:active { background: rgba(60,60,60,0.8); }
+  /* Кнопка «На весь экран» — слева по центру */
+  #fsBtn {
+    position: absolute;
+    top: 50%; left: 12px; transform: translateY(-50%);
+    width: 56px; height: 56px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff; font-size: 24px; line-height: 1;
+    border-radius: 10px;
+    pointer-events: auto; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 8;
+  }
+  #fsBtn:active { background: rgba(60,60,60,0.85); }
   #overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.9);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -53,8 +67,11 @@
   #overlay h1 { font-size: 22px; margin-bottom: 12px; color: #ff4444; }
   #overlay p { font-size: 14px; margin-bottom: 8px; line-height: 1.5; max-width: 520px; }
   #overlay button {
-    margin-top: 18px; padding: 12px 28px; font-size: 16px; font-family: monospace;
-    background: #ff4444; color: #fff; border: none; border-radius: 8px; cursor: pointer;
+    margin-top: 18px; padding: 14px 34px; font-size: 17px; font-family: monospace;
+    background: #ff4444; color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
   #overlay button:active { background: #cc0000; }
   #flash { position: fixed; inset: 0; background: #ff0000; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 5; }
@@ -65,10 +82,11 @@
 
 <div id="ui">
   <div id="status">SCP-096: спокоен</div>
-  <div id="hint">Джойстик — движение · Свайп справа — обзор · Смотрите на миникарту</div>
+  <div id="hint">Джойстик — движение · Свайп справа — обзор</div>
   <div id="joy"><div id="joyKnob"></div></div>
   <canvas id="minimap"></canvas>
   <button id="muteBtn">🔊 Звук: ВКЛ</button>
+  <button id="fsBtn" aria-label="На весь экран">⛶</button>
 </div>
 <div id="flash"></div>
 <div id="winFlash"></div>
@@ -79,7 +97,7 @@
   <p>Найдите <b style="color:#ff4444">КРАСНЫЙ</b>, <b style="color:#4488ff">СИНИЙ</b> или <b style="color:#44ff88">ЗЕЛЁНЫЙ</b> портал — они ведут прямо к выходу.</p>
   <p>Другие цвета — ложные, телепортируют в случайное место.</p>
   <p>В правом верхнем углу карты — бетонная вышка с мигающим маяком. Выход (зелёное свечение) — рядом с ней.</p>
-  <button id="startBtn">НАЧАТЬ</button>
+  <button id="startBtn" type="button">НАЧАТЬ</button>
 </div>
 
 <script type="importmap">
@@ -106,15 +124,21 @@ let ambientNodes = null;
 let ambientDucked = false;
 
 function initAudio() {
-  if (audioCtx) return;
+  if (audioCtx) {
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+    return;
+  }
   try {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
     masterGain = audioCtx.createGain();
     masterGain.gain.value = 0.6;
     masterGain.connect(audioCtx.destination);
     startAmbient();
-  } catch (e) { console.warn('Audio init failed', e); }
+  } catch (e) {
+    console.warn('Audio init failed', e);
+    audioCtx = null;
+  }
 }
 
 function startAmbient() {
@@ -166,10 +190,8 @@ function startAmbient() {
     osc.type = i % 2 === 0 ? 'sine' : 'triangle';
     osc.frequency.value = freq;
     osc.detune.value = (i - 1.5) * 5;
-
     const g = audioCtx.createGain();
     g.gain.value = 0.12;
-
     const vib = audioCtx.createOscillator();
     vib.frequency.value = 0.15 + i * 0.03;
     const vibGain = audioCtx.createGain();
@@ -177,7 +199,6 @@ function startAmbient() {
     vib.connect(vibGain);
     vibGain.connect(osc.frequency);
     vib.start();
-
     osc.connect(g);
     g.connect(padGain);
     osc.start();
@@ -200,7 +221,6 @@ function startAmbient() {
     if (!audioCtx || muted) return;
     const now = audioCtx.currentTime;
     const freq = [523.25, 587.33, 659.25, 783.99][Math.floor(Math.random() * 4)];
-
     const o1 = audioCtx.createOscillator();
     o1.type = 'sine'; o1.frequency.value = freq;
     const g1 = audioCtx.createGain();
@@ -209,7 +229,6 @@ function startAmbient() {
     g1.gain.exponentialRampToValueAtTime(0.001, now + 3);
     o1.connect(g1); g1.connect(masterGain);
     o1.start(now); o1.stop(now + 3);
-
     const o2 = audioCtx.createOscillator();
     o2.type = 'sine'; o2.frequency.value = freq * 2.01;
     const g2 = audioCtx.createGain();
@@ -357,6 +376,40 @@ function setMuted(m) {
 
 document.getElementById('muteBtn').addEventListener('click', () => setMuted(!muted));
 
+// ================== ПОЛНЫЙ ЭКРАН ==================
+const fsBtn = document.getElementById('fsBtn');
+function isFullscreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+            document.mozFullScreenElement || document.msFullscreenElement);
+}
+async function toggleFullscreen(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  const el = document.documentElement;
+  try {
+    if (!isFullscreen()) {
+      if (el.requestFullscreen) await el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) await document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
+  } catch (err) {
+    console.warn('Fullscreen failed', err);
+  }
+  updateFsBtn();
+}
+function updateFsBtn() {
+  fsBtn.textContent = isFullscreen() ? '⤢' : '⛶';
+}
+fsBtn.addEventListener('click', toggleFullscreen);
+fsBtn.addEventListener('touchstart', toggleFullscreen, { passive: false });
+document.addEventListener('fullscreenchange', updateFsBtn);
+document.addEventListener('webkitfullscreenchange', updateFsBtn);
+
 // ================== СЦЕНА ==================
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -486,56 +539,4 @@ function createTower(px, pz) {
   }
 
   const basePlate = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 2, 0.4, SPAN + 2), darkMat);
-  basePlate.position.y = 0.2;
-  basePlate.receiveShadow = true;
-  tower.add(basePlate);
-
-  function addBeam(x1, y1, z1, x2, y2, z2, thickness = 0.14, mat = metalMat) {
-    const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
-    const len = Math.hypot(dx, dy, dz);
-    const beam = new THREE.Mesh(new THREE.BoxGeometry(thickness, len, thickness), mat);
-    beam.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2);
-    beam.quaternion.setFromUnitVectors(
-      new THREE.Vector3(0, 1, 0),
-      new THREE.Vector3(dx, dy, dz).normalize()
-    );
-    beam.castShadow = true;
-    tower.add(beam);
-  }
-
-  const levels = [5, 10, LEG_H];
-  for (let li = 0; li < levels.length - 1; li++) {
-    const yLow = li === 0 ? 1.5 : levels[li - 1];
-    const yHigh = levels[li];
-    for (let i = 0; i < 4; i++) {
-      const a = legs[i], b = legs[(i + 1) % 4];
-      addBeam(a[0], yHigh, a[1], b[0], yHigh, b[1]);
-      addBeam(a[0], yLow, a[1], b[0], yHigh, b[1]);
-      addBeam(b[0], yLow, b[1], a[0], yHigh, a[1]);
-    }
-  }
-
-  for (const y of levels) {
-    const plat = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 1.2, 0.3, SPAN + 1.2), concreteMat);
-    plat.position.y = y;
-    plat.castShadow = true; plat.receiveShadow = true;
-    tower.add(plat);
-    const railH = 1.1, railInset = (SPAN + 1.2) / 2;
-    for (let i = 0; i < 4; i++) {
-      const rail = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 1.2, 0.08, 0.08), metalMat);
-      rail.position.y = y + railH;
-      if (i === 0) rail.position.z = -railInset;
-      if (i === 1) rail.position.z =  railInset;
-      if (i === 2) { rail.rotation.y = Math.PI / 2; rail.position.x = -railInset; }
-      if (i === 3) { rail.rotation.y = Math.PI / 2; rail.position.x =  railInset; }
-      tower.add(rail);
-      for (let j = 0; j < 4; j++) {
-        const t = (j / 3 - 0.5) * (SPAN + 1.2);
-        const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, railH, 0.08), metalMat);
-        if (i === 0) post.position.set(t, y + railH / 2, -railInset);
-        if (i === 1) post.position.set(t, y + railH / 2,  railInset);
-        if (i === 2) post.position.set(-railInset, y + railH / 2, t);
-        if (i === 3) post.position.set( railInset, y + railH / 2, t);
-        tower.add(post);
-      }
-  
+  basePlate
