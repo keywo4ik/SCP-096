@@ -9,71 +9,31 @@
   html, body { width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
   canvas { display: block; }
   #ui { position: fixed; inset: 0; pointer-events: none; font-family: monospace; color: #fff; }
-  #hint {
-    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-    background: rgba(0,0,0,0.55); padding: 6px 12px; border-radius: 6px;
-    font-size: 12px; text-align: center; opacity: 0.9; max-width: 90vw;
-  }
-  #status {
-    position: absolute; top: 10px; left: 10px;
-    background: rgba(0,0,0,0.55); padding: 6px 10px; border-radius: 6px; font-size: 13px;
-  }
-  #joy {
-    position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px;
-    border-radius: 50%; background: rgba(255,255,255,0.15);
-    border: 2px solid rgba(255,255,255,0.3); pointer-events: auto;
-  }
-  #joyKnob {
-    position: absolute; width: 50px; height: 50px; border-radius: 50%;
-    background: rgba(255,255,255,0.5); left: 35px; top: 35px;
-  }
-  #minimap {
-    position: absolute; top: 50px; right: 10px;
-    width: 150px; height: 150px;
-    border: 1px solid rgba(255,255,255,0.35);
-    border-radius: 6px;
-    background: rgba(0,0,0,0.6);
-    pointer-events: none;
-  }
-  #muteBtn {
-    position: absolute; top: 208px; right: 10px;
-    width: 150px; height: 34px;
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.35);
-    color: #fff; font-family: monospace; font-size: 13px;
-    border-radius: 6px; pointer-events: auto; cursor: pointer;
-  }
+  #hint { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.55); padding: 6px 12px; border-radius: 6px; font-size: 12px; text-align: center; opacity: 0.9; max-width: 90vw; }
+  #status { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.55); padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+  #joy { position: absolute; bottom: 30px; left: 30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); pointer-events: auto; }
+  #joyKnob { position: absolute; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.5); left: 35px; top: 35px; }
+  #minimap { position: absolute; top: 50px; right: 10px; width: 150px; height: 150px; border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; background: rgba(0,0,0,0.6); pointer-events: none; }
+  #muteBtn { position: absolute; top: 208px; right: 10px; width: 150px; height: 34px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.35); color: #fff; font-family: monospace; font-size: 13px; border-radius: 6px; pointer-events: auto; cursor: pointer; }
   #muteBtn:active { background: rgba(60,60,60,0.8); }
-  /* Кнопка «На весь экран» — слева по центру */
-  #fsBtn {
-    position: absolute;
-    top: 50%; left: 12px; transform: translateY(-50%);
-    width: 56px; height: 56px;
-    background: rgba(0,0,0,0.6);
-    border: 1px solid rgba(255,255,255,0.35);
-    color: #fff; font-size: 24px; line-height: 1;
-    border-radius: 10px;
-    pointer-events: auto; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 8;
-  }
+  #fsBtn { position: absolute; top: 50%; left: 12px; transform: translateY(-50%); width: 56px; height: 56px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.35); color: #fff; font-size: 24px; line-height: 1; border-radius: 10px; pointer-events: auto; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 8; }
   #fsBtn:active { background: rgba(60,60,60,0.85); }
-  #overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #fff; font-family: monospace; text-align: center; padding: 20px;
-    pointer-events: auto; z-index: 10;
-  }
+  .screen { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-family: monospace; text-align: center; padding: 20px; pointer-events: auto; z-index: 10; }
+  .screen.hidden { display: none; }
+  .screen h1 { font-size: 22px; margin-bottom: 14px; color: #ff4444; letter-spacing: 1px; }
+  .screen p { font-size: 14px; margin-bottom: 8px; line-height: 1.5; max-width: 520px; }
+  .screen button { margin-top: 18px; padding: 14px 34px; font-size: 17px; font-family: monospace; background: #ff4444; color: #fff; border: none; border-radius: 8px; cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .screen button:active { background: #cc0000; }
+  #loadBarWrap { width: 280px; max-width: 80vw; height: 12px; background: rgba(255,255,255,0.15); border-radius: 6px; overflow: hidden; margin: 14px 0 10px; border: 1px solid rgba(255,255,255,0.2); }
+  #loadBar { height: 100%; width: 0%; background: linear-gradient(90deg, #ff4444, #ff8844); transition: width 0.2s ease-out; }
+  #loadText { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
+  #loadStep { font-size: 12px; opacity: 0.65; margin-bottom: 18px; min-height: 16px; }
+  .trackName { margin-top: 18px; font-size: 12px; color: #88aaff; opacity: 0.85; letter-spacing: 0.5px; }
+  #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; font-family: monospace; text-align: center; padding: 20px; pointer-events: auto; z-index: 10; }
+  #overlay.show { display: flex; }
   #overlay h1 { font-size: 22px; margin-bottom: 12px; color: #ff4444; }
   #overlay p { font-size: 14px; margin-bottom: 8px; line-height: 1.5; max-width: 520px; }
-  #overlay button {
-    margin-top: 18px; padding: 14px 34px; font-size: 17px; font-family: monospace;
-    background: #ff4444; color: #fff; border: none; border-radius: 8px;
-    cursor: pointer; pointer-events: auto;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #overlay button:active { background: #cc0000; }
+  #overlay button { margin-top: 18px; padding: 14px 34px; font-size: 17px; font-family: monospace; background: #ff4444; color: #fff; border: none; border-radius: 8px; cursor: pointer; pointer-events: auto; touch-action: manipulation; }
   #flash { position: fixed; inset: 0; background: #ff0000; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 5; }
   #winFlash { position: fixed; inset: 0; background: #00ff88; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 5; }
 </style>
@@ -91,13 +51,34 @@
 <div id="flash"></div>
 <div id="winFlash"></div>
 
+<div id="screen-start" class="screen">
+  <h1>SCP-096 — ЛАБИРИНТ</h1>
+  <p>Вы в бетонном лабиринте. Где-то здесь SCP-096. <b>Не смотрите на него.</b></p>
+  <p>Найдите <b style="color:#ff4444">КРАСНЫЙ</b>, <b style="color:#4488ff">СИНИЙ</b> или <b style="color:#44ff88">ЗЕЛЁНЫЙ</b> портал — они ведут к выходу. Другие цвета — ложные.</p>
+  <p>Карта генерируется после нажатия. Пока идёт загрузка — играет трек.</p>
+  <button id="loadBtn" type="button">НАЧАТЬ</button>
+</div>
+
+<div id="screen-load" class="screen hidden">
+  <h1 style="color:#ff8844">ЗАГРУЗКА</h1>
+  <div id="loadBarWrap"><div id="loadBar"></div></div>
+  <div id="loadText">0%</div>
+  <div id="loadStep">Инициализация...</div>
+  <div class="trackName">♪ «Последний коридор» — The Last Corridor</div>
+</div>
+
+<div id="screen-ready" class="screen hidden">
+  <h1 style="color:#00ff88">ГОТОВО</h1>
+  <p>Лабиринт сгенерирован. SCP-096 уже внутри.</p>
+  <p>Не смотрите на него. Ищите цветной портал или вышку.</p>
+  <button id="enterBtn" type="button">ВОЙТИ В ЛАБИРИНТ</button>
+  <div class="trackName">♪ «Последний коридор» — The Last Corridor</div>
+</div>
+
 <div id="overlay">
   <h1>SCP-096 — ЛАБИРИНТ</h1>
   <p>Вы в бетонном лабиринте. Где-то здесь SCP-096. <b>Не смотрите на него.</b></p>
-  <p>Найдите <b style="color:#ff4444">КРАСНЫЙ</b>, <b style="color:#4488ff">СИНИЙ</b> или <b style="color:#44ff88">ЗЕЛЁНЫЙ</b> портал — они ведут прямо к выходу.</p>
-  <p>Другие цвета — ложные, телепортируют в случайное место.</p>
-  <p>В правом верхнем углу карты — бетонная вышка с мигающим маяком. Выход (зелёное свечение) — рядом с ней.</p>
-  <button id="startBtn" type="button">НАЧАТЬ</button>
+  <button id="restartBtn">ЗАНОВО</button>
 </div>
 
 <script type="importmap">
@@ -107,7 +88,6 @@
 <script type="module">
 import * as THREE from 'three';
 
-// ================== НАСТРОЙКИ ==================
 const MAZE_SIZE = 21;
 const CELL = 4;
 const WALL_H = 4;
@@ -117,11 +97,28 @@ const SCP_SPEED_IDLE = 1.2;
 const SCP_SPEED_RAGE = 9.0;
 const LOOK_TRIGGER_DIST = 30;
 const START_POS = new THREE.Vector3(0, 1.7, 0);
+const TOWER_CELL = { x: 19, y: 19 };
+const EXIT_CELL  = { x: 17, y: 17 };
 
-// ================== ЗВУК ==================
+let renderer = null, scene = null, camera = null;
+let maze = null, offset = 0, walls = null, floor = null;
+let tower = null, exitGroup = null, exitRing = null, exitPad = null, exitBeam = null;
+let towerPos = null, exitPos = null;
+let portals = [];
+let freeCells = [];
+let scp = null;
+let scpState = { mode: 'idle', rageTimer: 0, path: [], pathTimer: 0 };
+let minimapCanvas = null, minimapCtx = null;
+
+const player = { pos: START_POS.clone(), yaw: 0, pitch: 0, alive: true, won: false };
+const keys = {};
+let gameStarted = false;
+let worldReady = false;
+const clock = new THREE.Clock();
+
 let audioCtx = null, masterGain = null, muted = false;
-let ambientNodes = null;
-let ambientDucked = false;
+let ambientNodes = null, ambientDucked = false;
+let menuMusic = null;
 
 function initAudio() {
   if (audioCtx) {
@@ -134,76 +131,156 @@ function initAudio() {
     masterGain = audioCtx.createGain();
     masterGain.gain.value = 0.6;
     masterGain.connect(audioCtx.destination);
-    startAmbient();
   } catch (e) {
     console.warn('Audio init failed', e);
     audioCtx = null;
   }
 }
 
-function startAmbient() {
-  if (!audioCtx) return;
+function startMenuMusic() {
+  if (!audioCtx || menuMusic) return;
+  const now = audioCtx.currentTime;
+  const out = audioCtx.createGain();
+  out.gain.setValueAtTime(0.0001, now);
+  out.gain.linearRampToValueAtTime(0.5, now + 3);
+  out.connect(masterGain);
 
-  // ВЕТЕР: бурый шум + медленный LFO
+  const drones = [];
+  [55, 55.4, 110].forEach((f, i) => {
+    const o = audioCtx.createOscillator();
+    o.type = i === 2 ? 'triangle' : 'sine';
+    o.frequency.value = f;
+    const g = audioCtx.createGain();
+    g.gain.value = i === 2 ? 0.06 : 0.16;
+    o.connect(g); g.connect(out); o.start();
+    drones.push(o);
+  });
+  [110, 130.81, 164.81].forEach((f, i) => {
+    const o = audioCtx.createOscillator();
+    o.type = 'triangle'; o.frequency.value = f;
+    const vib = audioCtx.createOscillator();
+    vib.frequency.value = 0.15 + i * 0.04;
+    const vg = audioCtx.createGain(); vg.gain.value = 0.8;
+    vib.connect(vg); vg.connect(o.frequency); vib.start();
+    const g = audioCtx.createGain(); g.gain.value = 0.05;
+    o.connect(g); g.connect(out); o.start();
+    drones.push(o, vib);
+  });
+
+  const timers = [];
+  const intervals = [];
+
+  const sparkle = () => {
+    if (!menuMusic) return;
+    const t = audioCtx.currentTime;
+    const f = 1600 + Math.random() * 1800;
+    const o = audioCtx.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.025, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+    o.connect(g); g.connect(out); o.start(t); o.stop(t + 1.1);
+    timers.push(setTimeout(sparkle, 1200 + Math.random() * 2500));
+  };
+  sparkle();
+
+  timers.push(setTimeout(() => {
+    if (!menuMusic) return;
+    intervals.push(setInterval(() => {
+      if (!menuMusic) return;
+      const t = audioCtx.currentTime;
+      const k = audioCtx.createOscillator(); k.type = 'sine';
+      k.frequency.setValueAtTime(150, t);
+      k.frequency.exponentialRampToValueAtTime(45, t + 0.14);
+      const kg = audioCtx.createGain();
+      kg.gain.setValueAtTime(0.5, t);
+      kg.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      k.connect(kg); kg.connect(out); k.start(t); k.stop(t + 0.3);
+    }, 500));
+    intervals.push(setInterval(() => {
+      if (!menuMusic) return;
+      const t = audioCtx.currentTime;
+      const buf = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * 0.15), audioCtx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const s = audioCtx.createBufferSource(); s.buffer = buf;
+      const f = audioCtx.createBiquadFilter();
+      f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = 0.8;
+      const g = audioCtx.createGain();
+      g.gain.setValueAtTime(0.16, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+      s.connect(f); f.connect(g); g.connect(out); s.start(t);
+    }, 1000));
+    const riff = [82.41, 82.41, 98.0, 110.0, 82.41, 98.0, 110.0, 123.47];
+    let idx = 0;
+    intervals.push(setInterval(() => {
+      if (!menuMusic) return;
+      const t = audioCtx.currentTime;
+      const f0 = riff[idx % riff.length]; idx++;
+      [f0, f0 * 1.5].forEach(freq => {
+        const o = audioCtx.createOscillator();
+        o.type = 'sawtooth'; o.frequency.value = freq;
+        const ws = audioCtx.createWaveShaper();
+        const curve = new Float32Array(1024);
+        for (let i = 0; i < 1024; i++) { const x = i / 512 - 1; curve[i] = Math.tanh(x * 9); }
+        ws.curve = curve;
+        const g = audioCtx.createGain();
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(0.09, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.32);
+        o.connect(ws); ws.connect(g); g.connect(out);
+        o.start(t); o.stop(t + 0.36);
+      });
+    }, 260));
+  }, 12000));
+
+  menuMusic = { out, drones, timers, intervals };
+}
+
+function stopMenuMusic() {
+  if (!menuMusic || !audioCtx) return;
+  const m = menuMusic;
+  menuMusic = null;
+  const now = audioCtx.currentTime;
+  m.out.gain.cancelScheduledValues(now);
+  m.out.gain.setValueAtTime(m.out.gain.value, now);
+  m.out.gain.linearRampToValueAtTime(0.0001, now + 3);
+  setTimeout(() => {
+    m.timers.forEach(clearTimeout);
+    m.intervals.forEach(clearInterval);
+    m.drones.forEach(o => { try { o.stop(); } catch (e) {} });
+    try { m.out.disconnect(); } catch (e) {}
+  }, 3200);
+}
+function startAmbient() {
+  if (!audioCtx || ambientNodes) return;
   const bufSize = audioCtx.sampleRate * 4;
   const noiseBuf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
   const nd = noiseBuf.getChannelData(0);
   let last = 0;
-  for (let i = 0; i < bufSize; i++) {
-    const white = Math.random() * 2 - 1;
-    last = (last + 0.02 * white) / 1.02;
-    nd[i] = last * 3.5;
-  }
-  const noiseSrc = audioCtx.createBufferSource();
-  noiseSrc.buffer = noiseBuf;
-  noiseSrc.loop = true;
+  for (let i = 0; i < bufSize; i++) { const white = Math.random() * 2 - 1; last = (last + 0.02 * white) / 1.02; nd[i] = last * 3.5; }
+  const noiseSrc = audioCtx.createBufferSource(); noiseSrc.buffer = noiseBuf; noiseSrc.loop = true;
+  const windFilter = audioCtx.createBiquadFilter(); windFilter.type = 'lowpass'; windFilter.frequency.value = 600; windFilter.Q.value = 0.7;
+  const windGain = audioCtx.createGain(); windGain.gain.value = 0.08;
+  const windLfo = audioCtx.createOscillator(); windLfo.frequency.value = 0.08;
+  const windLfoGain = audioCtx.createGain(); windLfoGain.gain.value = 300;
+  windLfo.connect(windLfoGain); windLfoGain.connect(windFilter.frequency);
+  noiseSrc.connect(windFilter); windFilter.connect(windGain); windGain.connect(masterGain);
+  noiseSrc.start(); windLfo.start();
 
-  const windFilter = audioCtx.createBiquadFilter();
-  windFilter.type = 'lowpass';
-  windFilter.frequency.value = 600;
-  windFilter.Q.value = 0.7;
-
-  const windGain = audioCtx.createGain();
-  windGain.gain.value = 0.08;
-
-  const windLfo = audioCtx.createOscillator();
-  windLfo.frequency.value = 0.08;
-  const windLfoGain = audioCtx.createGain();
-  windLfoGain.gain.value = 300;
-  windLfo.connect(windLfoGain);
-  windLfoGain.connect(windFilter.frequency);
-
-  noiseSrc.connect(windFilter);
-  windFilter.connect(windGain);
-  windGain.connect(masterGain);
-  noiseSrc.start();
-  windLfo.start();
-
-  // ТЁПЛЫЙ ПЭД: Dm(add9) — D3, F3, A3, E4
   const padNotes = [146.83, 174.61, 220.00, 329.63];
-  const padGain = audioCtx.createGain();
-  padGain.gain.value = 0;
-  padGain.connect(masterGain);
-
+  const padGain = audioCtx.createGain(); padGain.gain.value = 0; padGain.connect(masterGain);
   padNotes.forEach((freq, i) => {
     const osc = audioCtx.createOscillator();
     osc.type = i % 2 === 0 ? 'sine' : 'triangle';
     osc.frequency.value = freq;
     osc.detune.value = (i - 1.5) * 5;
-    const g = audioCtx.createGain();
-    g.gain.value = 0.12;
-    const vib = audioCtx.createOscillator();
-    vib.frequency.value = 0.15 + i * 0.03;
-    const vibGain = audioCtx.createGain();
-    vibGain.gain.value = 1.5;
-    vib.connect(vibGain);
-    vibGain.connect(osc.frequency);
-    vib.start();
-    osc.connect(g);
-    g.connect(padGain);
-    osc.start();
+    const g = audioCtx.createGain(); g.gain.value = 0.12;
+    const vib = audioCtx.createOscillator(); vib.frequency.value = 0.15 + i * 0.03;
+    const vibGain = audioCtx.createGain(); vibGain.gain.value = 1.5;
+    vib.connect(vibGain); vibGain.connect(osc.frequency); vib.start();
+    osc.connect(g); g.connect(padGain); osc.start();
   });
-
   const t0 = audioCtx.currentTime;
   padGain.gain.setValueAtTime(0, t0);
   padGain.gain.linearRampToValueAtTime(0.3, t0 + 6);
@@ -216,36 +293,28 @@ function startAmbient() {
     padGain.gain.linearRampToValueAtTime(0.25, now + 10);
   }, 12000);
 
-  // ДАЛЬНИЙ КОЛОКОЛ
   const playBell = () => {
     if (!audioCtx || muted) return;
     const now = audioCtx.currentTime;
     const freq = [523.25, 587.33, 659.25, 783.99][Math.floor(Math.random() * 4)];
-    const o1 = audioCtx.createOscillator();
-    o1.type = 'sine'; o1.frequency.value = freq;
+    const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = freq;
     const g1 = audioCtx.createGain();
     g1.gain.setValueAtTime(0, now);
     g1.gain.linearRampToValueAtTime(0.06, now + 0.05);
     g1.gain.exponentialRampToValueAtTime(0.001, now + 3);
-    o1.connect(g1); g1.connect(masterGain);
-    o1.start(now); o1.stop(now + 3);
-    const o2 = audioCtx.createOscillator();
-    o2.type = 'sine'; o2.frequency.value = freq * 2.01;
+    o1.connect(g1); g1.connect(masterGain); o1.start(now); o1.stop(now + 3);
+    const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq * 2.01;
     const g2 = audioCtx.createGain();
     g2.gain.setValueAtTime(0, now);
     g2.gain.linearRampToValueAtTime(0.02, now + 0.05);
     g2.gain.exponentialRampToValueAtTime(0.001, now + 2);
-    o2.connect(g2); g2.connect(masterGain);
-    o2.start(now); o2.stop(now + 2);
+    o2.connect(g2); g2.connect(masterGain); o2.start(now); o2.stop(now + 2);
   };
-
-  // ПТИЦЫ
   const playChirp = () => {
     if (!audioCtx || muted) return;
     const now = audioCtx.currentTime;
     const base = 1800 + Math.random() * 1200;
-    const osc = audioCtx.createOscillator();
-    osc.type = 'sine';
+    const osc = audioCtx.createOscillator(); osc.type = 'sine';
     osc.frequency.setValueAtTime(base, now);
     osc.frequency.exponentialRampToValueAtTime(base * 1.5, now + 0.08);
     osc.frequency.exponentialRampToValueAtTime(base * 0.8, now + 0.15);
@@ -253,10 +322,8 @@ function startAmbient() {
     g.gain.setValueAtTime(0, now);
     g.gain.linearRampToValueAtTime(0.03, now + 0.02);
     g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-    osc.connect(g); g.connect(masterGain);
-    osc.start(now); osc.stop(now + 0.2);
+    osc.connect(g); g.connect(masterGain); osc.start(now); osc.stop(now + 0.2);
   };
-
   setInterval(() => { if (Math.random() < 0.6) playBell(); }, 15000);
   setInterval(() => { if (Math.random() < 0.7) playChirp(); }, 8000);
 
@@ -279,31 +346,24 @@ function setAmbientDucked(ducked) {
 
 function playScream() {
   if (!audioCtx || muted) return;
-  const now = audioCtx.currentTime;
-  const dur = 2.2;
-  const osc1 = audioCtx.createOscillator();
-  osc1.type = 'sawtooth';
+  const now = audioCtx.currentTime, dur = 2.2;
+  const osc1 = audioCtx.createOscillator(); osc1.type = 'sawtooth';
   osc1.frequency.setValueAtTime(90, now);
   osc1.frequency.exponentialRampToValueAtTime(240, now + 0.3);
   osc1.frequency.exponentialRampToValueAtTime(70, now + dur);
-  const osc2 = audioCtx.createOscillator();
-  osc2.type = 'square';
+  const osc2 = audioCtx.createOscillator(); osc2.type = 'square';
   osc2.frequency.setValueAtTime(140, now);
   osc2.frequency.exponentialRampToValueAtTime(350, now + 0.3);
   osc2.frequency.exponentialRampToValueAtTime(100, now + dur);
   const noiseBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
   const nd2 = noiseBuf.getChannelData(0);
   for (let i = 0; i < nd2.length; i++) nd2[i] = Math.random() * 2 - 1;
-  const noise = audioCtx.createBufferSource();
-  noise.buffer = noiseBuf;
+  const noise = audioCtx.createBufferSource(); noise.buffer = noiseBuf;
   const filter = audioCtx.createBiquadFilter();
   filter.type = 'bandpass'; filter.frequency.value = 900; filter.Q.value = 1.8;
   const dist = audioCtx.createWaveShaper();
   const curve = new Float32Array(256);
-  for (let i = 0; i < 256; i++) {
-    const x = i / 128 - 1;
-    curve[i] = Math.tanh(x * 6);
-  }
+  for (let i = 0; i < 256; i++) { const x = i / 128 - 1; curve[i] = Math.tanh(x * 6); }
   dist.curve = curve;
   const gain = audioCtx.createGain();
   gain.gain.setValueAtTime(0, now);
@@ -321,8 +381,7 @@ function playScream() {
 function playPortalSound(correct) {
   if (!audioCtx || muted) return;
   const now = audioCtx.currentTime;
-  const osc = audioCtx.createOscillator();
-  osc.type = 'sine';
+  const osc = audioCtx.createOscillator(); osc.type = 'sine';
   if (correct) {
     osc.frequency.setValueAtTime(450, now);
     osc.frequency.exponentialRampToValueAtTime(1400, now + 0.45);
@@ -333,38 +392,33 @@ function playPortalSound(correct) {
   const g = audioCtx.createGain();
   g.gain.setValueAtTime(0.25, now);
   g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-  osc.connect(g); g.connect(masterGain);
-  osc.start(now); osc.stop(now + 0.45);
+  osc.connect(g); g.connect(masterGain); osc.start(now); osc.stop(now + 0.45);
 }
 
 function playWinSound() {
   if (!audioCtx || muted) return;
   const now = audioCtx.currentTime;
   [523, 659, 784, 1047].forEach((f, i) => {
-    const o = audioCtx.createOscillator();
-    o.type = 'triangle'; o.frequency.value = f;
+    const o = audioCtx.createOscillator(); o.type = 'triangle'; o.frequency.value = f;
     const g = audioCtx.createGain();
     const t = now + i * 0.14;
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(0.22, t + 0.02);
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
-    o.connect(g); g.connect(masterGain);
-    o.start(t); o.stop(t + 0.5);
+    o.connect(g); g.connect(masterGain); o.start(t); o.stop(t + 0.5);
   });
 }
 
 function playDeathSound() {
   if (!audioCtx || muted) return;
   const now = audioCtx.currentTime;
-  const o = audioCtx.createOscillator();
-  o.type = 'sawtooth';
+  const o = audioCtx.createOscillator(); o.type = 'sawtooth';
   o.frequency.setValueAtTime(200, now);
   o.frequency.exponentialRampToValueAtTime(40, now + 1.2);
   const g = audioCtx.createGain();
   g.gain.setValueAtTime(0.4, now);
   g.gain.exponentialRampToValueAtTime(0.001, now + 1.3);
-  o.connect(g); g.connect(masterGain);
-  o.start(now); o.stop(now + 1.3);
+  o.connect(g); g.connect(masterGain); o.start(now); o.stop(now + 1.3);
 }
 
 function setMuted(m) {
@@ -373,10 +427,8 @@ function setMuted(m) {
   const b = document.getElementById('muteBtn');
   b.textContent = m ? '🔇 Звук: ВЫКЛ' : '🔊 Звук: ВКЛ';
 }
-
 document.getElementById('muteBtn').addEventListener('click', () => setMuted(!muted));
 
-// ================== ПОЛНЫЙ ЭКРАН ==================
 const fsBtn = document.getElementById('fsBtn');
 function isFullscreen() {
   return !!(document.fullscreenElement || document.webkitFullscreenElement ||
@@ -397,48 +449,28 @@ async function toggleFullscreen(e) {
       else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
       else if (document.msExitFullscreen) document.msExitFullscreen();
     }
-  } catch (err) {
-    console.warn('Fullscreen failed', err);
-  }
+  } catch (err) { console.warn('Fullscreen failed', err); }
   updateFsBtn();
 }
-function updateFsBtn() {
-  fsBtn.textContent = isFullscreen() ? '⤢' : '⛶';
-}
+function updateFsBtn() { fsBtn.textContent = isFullscreen() ? '⤢' : '⛶'; }
 fsBtn.addEventListener('click', toggleFullscreen);
 fsBtn.addEventListener('touchstart', toggleFullscreen, { passive: false });
 document.addEventListener('fullscreenchange', updateFsBtn);
 document.addEventListener('webkitfullscreenchange', updateFsBtn);
 
-// ================== СЦЕНА ==================
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-document.body.appendChild(renderer.domElement);
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function vibrate(pattern) { if (navigator.vibrate) try { navigator.vibrate(pattern); } catch (e) {} }
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a0a0f);
-scene.fog = new THREE.Fog(0x0a0a0f, 10, 50);
+function cellToWorld(cx, cy) {
+  return new THREE.Vector3(cx * CELL - offset + CELL / 2, 0, cy * CELL - offset + CELL / 2);
+}
+function worldToCell(p) { return { x: Math.floor((p.x + offset) / CELL), y: Math.floor((p.z + offset) / CELL) }; }
+function isWalkable(cx, cy) {
+  if (!maze) return false;
+  if (cx < 0 || cy < 0 || cx >= MAZE_SIZE || cy >= MAZE_SIZE) return false;
+  return maze[cx][cy] === 0;
+}
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
-scene.add(new THREE.AmbientLight(0x404050, 1.2));
-const playerLight = new THREE.PointLight(0xffffee, 1.5, 18, 2);
-camera.add(playerLight);
-scene.add(camera);
-
-const moon = new THREE.DirectionalLight(0x8899bb, 0.6);
-moon.position.set(20, 40, 20);
-moon.castShadow = true;
-moon.shadow.mapSize.set(1024, 1024);
-moon.shadow.camera.left = -60;
-moon.shadow.camera.right = 60;
-moon.shadow.camera.top = 60;
-moon.shadow.camera.bottom = -60;
-scene.add(moon);
-
-// ================== ЛАБИРИНТ ==================
 function generateMaze(n) {
   const grid = Array.from({ length: n }, () => Array(n).fill(1));
   const stack = [[1, 1]];
@@ -460,57 +492,125 @@ function generateMaze(n) {
     } else stack.pop();
   }
   return grid;
+ }
+ function stepRenderer() {
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.body.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a0f);
+  scene.fog = new THREE.Fog(0x0a0a0f, 10, 50);
+
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+  scene.add(new THREE.AmbientLight(0x404050, 1.2));
+  const playerLight = new THREE.PointLight(0xffffee, 1.5, 18, 2);
+  camera.add(playerLight);
+  scene.add(camera);
+
+  const moon = new THREE.DirectionalLight(0x8899bb, 0.6);
+  moon.position.set(20, 40, 20);
+  moon.castShadow = true;
+  moon.shadow.mapSize.set(1024, 1024);
+  moon.shadow.camera.left = -60;
+  moon.shadow.camera.right = 60;
+  moon.shadow.camera.top = 60;
+  moon.shadow.camera.bottom = -60;
+  scene.add(moon);
+
+  attachRendererControls();
 }
 
-const maze = generateMaze(MAZE_SIZE);
-const offset = (MAZE_SIZE * CELL) / 2;
+function attachRendererControls() {
+  let lookId = null, lookLast = { x: 0, y: 0 };
+  renderer.domElement.addEventListener('touchstart', e => {
+    for (const t of e.changedTouches)
+      if (t.clientX > window.innerWidth * 0.35 && lookId === null) {
+        lookId = t.identifier;
+        lookLast.x = t.clientX; lookLast.y = t.clientY;
+      }
+  }, { passive: false });
+  renderer.domElement.addEventListener('touchmove', e => {
+    for (const t of e.changedTouches)
+      if (t.identifier === lookId) {
+        const dx = t.clientX - lookLast.x, dy = t.clientY - lookLast.y;
+        lookLast.x = t.clientX; lookLast.y = t.clientY;
+        player.yaw -= dx * 0.005;
+        player.pitch -= dy * 0.005;
+        player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
+      }
+  }, { passive: false });
+  const lookEnd = e => {
+    for (const t of e.changedTouches)
+      if (t.identifier === lookId) lookId = null;
+  };
+  renderer.domElement.addEventListener('touchend', lookEnd);
+  renderer.domElement.addEventListener('touchcancel', lookEnd);
 
-for (let x = MAZE_SIZE - 4; x < MAZE_SIZE; x++)
-  for (let y = MAZE_SIZE - 4; y < MAZE_SIZE; y++)
-    maze[x][y] = 0;
-
-const wallMat = new THREE.MeshStandardMaterial({ color: 0x6b6b6b, roughness: 0.9 });
-const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 1.0 });
-
-const floor = new THREE.Mesh(new THREE.PlaneGeometry(MAZE_SIZE * CELL, MAZE_SIZE * CELL), floorMat);
-floor.rotation.x = -Math.PI / 2;
-floor.receiveShadow = true;
-scene.add(floor);
-
-const wallGeo = new THREE.BoxGeometry(CELL, WALL_H, CELL);
-let wallCount = 0;
-for (let x = 0; x < MAZE_SIZE; x++)
-  for (let y = 0; y < MAZE_SIZE; y++)
-    if (maze[x][y] === 1) wallCount++;
-
-const walls = new THREE.InstancedMesh(wallGeo, wallMat, wallCount);
-walls.castShadow = true; walls.receiveShadow = true;
-const dummy = new THREE.Object3D();
-let wi = 0;
-for (let x = 0; x < MAZE_SIZE; x++)
-  for (let y = 0; y < MAZE_SIZE; y++)
-    if (maze[x][y] === 1) {
-      dummy.position.set(x * CELL - offset + CELL / 2, WALL_H / 2, y * CELL - offset + CELL / 2);
-      dummy.updateMatrix();
-      walls.setMatrixAt(wi++, dummy.matrix);
+  let mouseDown = false;
+  renderer.domElement.addEventListener('mousedown', () => mouseDown = true);
+  window.addEventListener('mouseup', () => mouseDown = false);
+  window.addEventListener('mousemove', e => {
+    if (mouseDown) {
+      player.yaw -= e.movementX * 0.003;
+      player.pitch -= e.movementY * 0.003;
+      player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
     }
-scene.add(walls);
-
-// ================== ВЫШКА ==================
-function cellToWorld(cx, cy) {
-  return new THREE.Vector3(cx * CELL - offset + CELL / 2, 0, cy * CELL - offset + CELL / 2);
+  });
+  renderer.domElement.addEventListener('click', () => {
+    if (document.pointerLockElement !== renderer.domElement)
+      renderer.domElement.requestPointerLock();
+  });
+  window.addEventListener('mousemove', e => {
+    if (document.pointerLockElement === renderer.domElement) {
+      player.yaw -= e.movementX * 0.003;
+      player.pitch -= e.movementY * 0.003;
+      player.pitch = Math.max(-1.2, Math.min(1.2, player.pitch));
+    }
+  });
 }
 
-const TOWER_CELL = { x: 19, y: 19 };
-const EXIT_CELL  = { x: 17, y: 17 };
-const towerPos = cellToWorld(TOWER_CELL.x, TOWER_CELL.y);
-const exitPos  = cellToWorld(EXIT_CELL.x,  EXIT_CELL.y);
+function stepMaze() {
+  maze = generateMaze(MAZE_SIZE);
+  offset = (MAZE_SIZE * CELL) / 2;
+  for (let x = MAZE_SIZE - 4; x < MAZE_SIZE; x++)
+    for (let y = MAZE_SIZE - 4; y < MAZE_SIZE; y++)
+      maze[x][y] = 0;
+
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x6b6b6b, roughness: 0.9 });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 1.0 });
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(MAZE_SIZE * CELL, MAZE_SIZE * CELL), floorMat);
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  const wallGeo = new THREE.BoxGeometry(CELL, WALL_H, CELL);
+  let wallCount = 0;
+  for (let x = 0; x < MAZE_SIZE; x++)
+    for (let y = 0; y < MAZE_SIZE; y++)
+      if (maze[x][y] === 1) wallCount++;
+
+  walls = new THREE.InstancedMesh(wallGeo, wallMat, wallCount);
+  walls.castShadow = true; walls.receiveShadow = true;
+  const dummy = new THREE.Object3D();
+  let wi = 0;
+  for (let x = 0; x < MAZE_SIZE; x++)
+    for (let y = 0; y < MAZE_SIZE; y++)
+      if (maze[x][y] === 1) {
+        dummy.position.set(x * CELL - offset + CELL / 2, WALL_H / 2, y * CELL - offset + CELL / 2);
+        dummy.updateMatrix();
+        walls.setMatrixAt(wi++, dummy.matrix);
+      }
+  scene.add(walls);
+}
 
 function createTower(px, pz) {
-  const tower = new THREE.Group();
-  const LEG_H = 15;
-  const SPAN = CELL * 1.6;
-  const LEG_W = 0.7;
+  const towerG = new THREE.Group();
+  const LEG_H = 15, SPAN = CELL * 1.6, LEG_W = 0.7;
 
   const concreteMat  = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, roughness: 0.95 });
   const darkMat      = new THREE.MeshStandardMaterial({ color: 0x5e5e5e, roughness: 0.95 });
@@ -520,23 +620,694 @@ function createTower(px, pz) {
   const beaconMat    = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 3 });
 
   const legs = [
-    [-SPAN/2, -SPAN/2], [SPAN/2, -SPAN/2],
-    [-SPAN/2,  SPAN/2], [SPAN/2,  SPAN/2]
+    [-SPAN / 2, -SPAN / 2], [SPAN / 2, -SPAN / 2],
+    [-SPAN / 2,  SPAN / 2], [SPAN / 2,  SPAN / 2]
   ];
   for (const [lx, lz] of legs) {
     const leg = new THREE.Mesh(new THREE.BoxGeometry(LEG_W, LEG_H, LEG_W), concreteMat);
     leg.position.set(lx, LEG_H / 2, lz);
     leg.castShadow = true; leg.receiveShadow = true;
-    tower.add(leg);
+    towerG.add(leg);
     for (let i = 0; i < 8; i++) {
       const stripe = new THREE.Mesh(
         new THREE.BoxGeometry(LEG_W + 0.06, 0.45, LEG_W + 0.06),
         i % 2 === 0 ? warnRedMat : warnWhiteMat
       );
       stripe.position.set(lx, 0.225 + i * 0.45, lz);
-      tower.add(stripe);
+      towerG.add(stripe);
     }
   }
 
   const basePlate = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 2, 0.4, SPAN + 2), darkMat);
-  basePlate
+  basePlate.position.y = 0.2; basePlate.receiveShadow = true; towerG.add(basePlate);
+
+  function addBeam(x1, y1, z1, x2, y2, z2, thickness = 0.14, mat = metalMat) {
+    const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+    const len = Math.hypot(dx, dy, dz);
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(thickness, len, thickness), mat);
+    beam.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2);
+    beam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(dx, dy, dz).normalize());
+    beam.castShadow = true;
+    towerG.add(beam);
+  }
+
+  const levels = [5, 10, LEG_H];
+  for (let li = 0; li < levels.length - 1; li++) {
+    const yLow = li === 0 ? 1.5 : levels[li - 1];
+    const yHigh = levels[li];
+    for (let i = 0; i < 4; i++) {
+      const a = legs[i], b = legs[(i + 1) % 4];
+      addBeam(a[0], yHigh, a[1], b[0], yHigh, b[1]);
+      addBeam(a[0], yLow, a[1], b[0], yHigh, b[1]);
+      addBeam(b[0], yLow, b[1], a[0], yHigh, a[1]);
+    }
+  }
+
+  for (const y of levels) {
+    const plat = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 1.2, 0.3, SPAN + 1.2), concreteMat);
+    plat.position.y = y; plat.castShadow = true; plat.receiveShadow = true; towerG.add(plat);
+    const railH = 1.1, railInset = (SPAN + 1.2) / 2;
+    for (let i = 0; i < 4; i++) {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(SPAN + 1.2, 0.08, 0.08), metalMat);
+      rail.position.y = y + railH;
+      if (i === 0) rail.position.z = -railInset;
+      if (i === 1) rail.position.z =  railInset;
+      if (i === 2) { rail.rotation.y = Math.PI / 2; rail.position.x = -railInset; }
+      if (i === 3) { rail.rotation.y = Math.PI / 2; rail.position.x =  railInset; }
+      towerG.add(rail);
+      for (let j = 0; j < 4; j++) {
+        const t = (j / 3 - 0.5) * (SPAN + 1.2);
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, railH, 0.08), metalMat);
+        if (i === 0) post.position.set(t, y + railH / 2, -railInset);
+        if (i === 1) post.position.set(t, y + railH / 2,  railInset);
+        if (i === 2) post.position.set(-railInset, y + railH / 2, t);
+        if (i === 3) post.position.set( railInset, y + railH / 2, t);
+        towerG.add(post);
+      }
+    }
+  }
+
+  const ladderZ = SPAN / 2 + 0.35;
+  for (const lx of [-0.5, 0.5]) {
+    const railSide = new THREE.Mesh(new THREE.BoxGeometry(0.1, LEG_H, 0.1), metalMat);
+    railSide.position.set(lx, LEG_H / 2, ladderZ); towerG.add(railSide);
+  }
+  for (let i = 0; i < Math.floor(LEG_H / 0.5); i++) {
+    const rung = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.07, 0.07), metalMat);
+    rung.position.set(0, 0.4 + i * 0.5, ladderZ); towerG.add(rung);
+  }
+
+  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 4.5, 8), metalMat);
+  antenna.position.y = LEG_H + 2.5; towerG.add(antenna);
+
+  const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 14), beaconMat);
+  beacon.position.y = LEG_H + 5; towerG.add(beacon);
+
+  const beaconLight = new THREE.PointLight(0xff0000, 2, 25);
+  beaconLight.position.y = LEG_H + 5; towerG.add(beaconLight);
+
+  towerG.position.set(px, 0, pz);
+  return { group: towerG, beacon, beaconLight };
+}
+
+function stepTower() {
+  towerPos = cellToWorld(TOWER_CELL.x, TOWER_CELL.y);
+  exitPos  = cellToWorld(EXIT_CELL.x,  EXIT_CELL.y);
+  tower = createTower(towerPos.x, towerPos.z);
+  scene.add(tower.group);
+}
+
+function stepExit() {
+  exitGroup = new THREE.Group();
+  exitRing = new THREE.Mesh(
+    new THREE.TorusGeometry(1.8, 0.25, 10, 28),
+    new THREE.MeshStandardMaterial({ color: 0x00ff88, emissive: 0x00ff88, emissiveIntensity: 2 })
+  );
+  exitRing.rotation.x = Math.PI / 2; exitRing.position.y = 0.3; exitGroup.add(exitRing);
+
+  exitPad = new THREE.Mesh(
+    new THREE.CircleGeometry(1.7, 28),
+    new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.35, side: THREE.DoubleSide })
+  );
+  exitPad.rotation.x = -Math.PI / 2; exitPad.position.y = 0.05; exitGroup.add(exitPad);
+
+  exitBeam = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.3, 1.6, 14, 20, 1, true),
+    new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.18, side: THREE.DoubleSide })
+  );
+  exitBeam.position.y = 7; exitGroup.add(exitBeam);
+
+  const exitLight = new THREE.PointLight(0x00ff88, 3, 20);
+  exitLight.position.y = 3; exitGroup.add(exitLight);
+  exitGroup.position.copy(exitPos); scene.add(exitGroup);
+}
+
+function createPortal(color, isCorrect) {
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(1.2, 0.25, 8, 24),
+    new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 2 })
+  );
+  ring.rotation.x = Math.PI / 2; ring.position.y = 1; g.add(ring);
+  const core = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.9, 0.9, 2.5, 16, 1, true),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+  );
+  core.position.y = 1.25; g.add(core);
+  const light = new THREE.PointLight(color, 2, 8); light.position.y = 1; g.add(light);
+  g.userData = { color, isCorrect, ring, core, light };
+  return g;
+}
+
+function stepPortals() {
+  const correctColors = [0xff0000, 0x0066ff, 0x00ff66];
+  const falseColors   = [0xffaa00, 0xaa00ff, 0x00ffff, 0xff00ff, 0xffff00, 0x884400, 0xffffff];
+
+  freeCells = [];
+  for (let x = 1; x < MAZE_SIZE - 1; x++)
+    for (let y = 1; y < MAZE_SIZE - 1; y++)
+      if (maze[x][y] === 0) {
+        const wx = x * CELL - offset + CELL / 2;
+        const wz = y * CELL - offset + CELL / 2;
+        if (Math.hypot(wx - START_POS.x,  wz - START_POS.z)  > 8 &&
+            Math.hypot(wx - exitPos.x,     wz - exitPos.z)   > 8 &&
+            Math.hypot(wx - towerPos.x,    wz - towerPos.z)  > 10)
+          freeCells.push({ x: wx, z: wz });
+      }
+
+  for (let i = freeCells.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [freeCells[i], freeCells[j]] = [freeCells[j], freeCells[i]];
+  }
+
+  portals = [];
+  for (let i = 0; i < 3; i++) {
+    const cell = freeCells[i];
+    const p = createPortal(correctColors[i], true);
+    p.position.set(cell.x, 0, cell.z);
+    scene.add(p); portals.push(p);
+  }
+  for (let i = 0; i < 7; i++) {
+    const cell = freeCells[3 + i];
+    const p = createPortal(falseColors[i], false);
+    p.position.set(cell.x, 0, cell.z);
+    scene.add(p); portals.push(p);
+  }
+}
+
+function createSCP096() {
+  const g = new THREE.Group();
+  const skinMat  = new THREE.MeshStandardMaterial({ color: 0xd4c0a8, roughness: 0.85 });
+  const eyeMat   = new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xff0000, emissiveIntensity: 3 });
+  const mouthMat = new THREE.MeshStandardMaterial({ color: 0x330000, emissive: 0x330000, emissiveIntensity: 0.6 });
+
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.4, 1.6, 4, 10), skinMat);
+  torso.position.y = 1.7; torso.castShadow = true; g.add(torso);
+
+  const headGroup = new THREE.Group(); headGroup.position.y = 2.9;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 14, 14), skinMat);
+  head.scale.set(0.85, 1.3, 0.9); head.castShadow = true; headGroup.add(head);
+
+  const mouth = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.5, 8, 1, true), mouthMat);
+  mouth.position.set(0, -0.05, 0.32); mouth.rotation.x = Math.PI * 0.5; headGroup.add(mouth);
+
+  for (let i = 0; i < 6; i++) {
+    const tooth = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.07, 4),
+      new THREE.MeshStandardMaterial({ color: 0xeeeedd, roughness: 0.5 }));
+    const a = (i / 6) * Math.PI * 2;
+    tooth.position.set(Math.cos(a) * 0.11, -0.05 + Math.sin(a) * 0.11, 0.36);
+    tooth.rotation.x = Math.PI; headGroup.add(tooth);
+  }
+  for (const sx of [-0.13, 0.13]) {
+    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 10), eyeMat);
+    eye.position.set(sx, 0.15, 0.33); headGroup.add(eye);
+  }
+  g.add(headGroup);
+
+  const arms = [];
+  for (const side of [-1, 1]) {
+    const armGroup = new THREE.Group(); armGroup.position.set(side * 0.5, 2.3, 0);
+    const upper = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 1.0, 4, 6), skinMat);
+    upper.position.y = -0.6; upper.castShadow = true; armGroup.add(upper);
+    const fore = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 1.2, 4, 6), skinMat);
+    fore.position.y = -1.8; fore.castShadow = true; armGroup.add(fore);
+    for (let f = 0; f < 4; f++) {
+      const finger = new THREE.Mesh(new THREE.CapsuleGeometry(0.03, 0.5, 3, 5), skinMat);
+      finger.position.set((f - 1.5) * 0.08, -2.65, 0);
+      finger.castShadow = true; armGroup.add(finger);
+    }
+    g.add(armGroup); arms.push(armGroup);
+  }
+  for (const side of [-1, 1]) {
+    const upperLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.12, 0.8, 4, 6), skinMat);
+    upperLeg.position.set(side * 0.2, 0.7, 0); upperLeg.castShadow = true; g.add(upperLeg);
+    const lowerLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.6, 4, 6), skinMat);
+    lowerLeg.position.set(side * 0.2, 0.0, 0.05); lowerLeg.castShadow = true; g.add(lowerLeg);
+  }
+  g.userData = { headGroup, arms };
+  return g;
+}
+
+function stepSCP() {
+  scp = createSCP096();
+  scp.position.set(-offset + CELL * 3, 0, -offset + CELL * 3);
+  scene.add(scp);
+  scpState = { mode: 'idle', rageTimer: 0, path: [], pathTimer: 0 };
+}
+
+function stepMinimap() {
+  minimapCanvas = document.getElementById('minimap');
+  minimapCtx = minimapCanvas.getContext('2d');
+  const MM_SIZE = 150;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  minimapCanvas.width = MM_SIZE * dpr;
+  minimapCanvas.height = MM_SIZE * dpr;
+  minimapCtx.scale(dpr, dpr);
+}
+
+async function loadWorld() {
+  const steps = [
+    ['Инициализация рендера', stepRenderer],
+    ['Генерация лабиринта', stepMaze],
+    ['Строительство вышки', stepTower],
+    ['Создание выхода', stepExit],
+    ['Расстановка порталов', stepPortals],
+    ['Пробуждение SCP-096', stepSCP],
+    ['Настройка миникарты', stepMinimap],
+  ];
+  const bar = document.getElementById('loadBar');
+  const pctEl = document.getElementById('loadText');
+  const stepEl = document.getElementById('loadStep');
+  for (let i = 0; i < steps.length; i++) {
+    const [label, fn] = steps[i];
+    stepEl.textContent = label + '...';
+    await sleep(60);
+    try { fn(); } catch (e) { console.error('Step failed:', label, e); }
+    const pct = Math.round(((i + 1) / steps.length) * 100);
+    bar.style.width = pct + '%'; pctEl.textContent = pct + '%';
+    await sleep(180);
+  }
+  await sleep(300);
+  document.getElementById('screen-load').classList.add('hidden');
+  document.getElementById('screen-ready').classList.remove('hidden');
+  worldReady = true;
+}
+
+const loadBtn = document.getElementById('loadBtn');
+function onLoadBtn(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  if (loadBtn.dataset.busy) return;
+  loadBtn.dataset.busy = '1';
+  try { initAudio(); startMenuMusic(); } catch (err) { console.warn('Audio error', err); }
+  document.getElementById('screen-start').classList.add('hidden');
+  document.getElementById('screen-load').classList.remove('hidden');
+  loadWorld();
+}
+loadBtn.addEventListener('click', onLoadBtn);
+loadBtn.addEventListener('touchstart', onLoadBtn, { passive: false });
+
+const enterBtn = document.getElementById('enterBtn');
+function onEnterBtn(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  if (!worldReady) return;
+  document.getElementById('screen-ready').classList.add('hidden');
+  try {
+    stopMenuMusic();
+    initAudio();
+    if (audioCtx && !ambientNodes) startAmbient();
+  } catch (err) { console.warn('Audio start error', err); }
+  gameStarted = true;
+}
+enterBtn.addEventListener('click', onEnterBtn);
+enterBtn.addEventListener('touchstart', onEnterBtn, { passive: false });
+
+document.getElementById('restartBtn').addEventListener('click', () => location.reload());
+
+const joy = document.getElementById('joy');
+const joyKnob = document.getElementById('joyKnob');
+let joyId = null, joyStart = { x: 0, y: 0 }, joyVec = { x: 0, y: 0 };
+const joyRadius = 45;
+
+joy.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  joyId = t.identifier;
+  joyStart.x = t.clientX; joyStart.y = t.clientY;
+});
+joy.addEventListener('touchmove', e => {
+  e.preventDefault();
+  for (const t of e.changedTouches)
+    if (t.identifier === joyId) {
+      let dx = t.clientX - joyStart.x, dy = t.clientY - joyStart.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist > joyRadius) { dx = dx / dist * joyRadius; dy = dy / dist * joyRadius; }
+      joyVec.x = dx / joyRadius; joyVec.y = dy / joyRadius;
+      joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+    }
+});
+const joyEnd = e => {
+  for (const t of e.changedTouches)
+    if (t.identifier === joyId) {
+      joyId = null; joyVec.x = 0; joyVec.y = 0; joyKnob.style.transform = '';
+    }
+};
+joy.addEventListener('touchend', joyEnd);
+joy.addEventListener('touchcancel', joyEnd);
+
+window.addEventListener('keydown', e => keys[e.code] = true);
+window.addEventListener('keyup',   e => keys[e.code] = false);
+
+function findPath(start, goal) {
+  const s = worldToCell(start), g = worldToCell(goal);
+  if (!isWalkable(s.x, s.y) || !isWalkable(g.x, g.y)) return [];
+  const queue = [[s.x, s.y]];
+  const visited = new Set([`${s.x},${s.y}`]);
+  const parent = new Map();
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  while (queue.length) {
+    const [cx, cy] = queue.shift();
+    if (cx === g.x && cy === g.y) {
+      const path = [];
+      let cur = `${cx},${cy}`;
+      while (cur) {
+        const [px, py] = cur.split(',').map(Number);
+        path.unshift(cellToWorld(px, py));
+        cur = parent.get(cur);
+      }
+      return path;
+    }
+    for (const [dx, dy] of dirs) {
+      const nx = cx + dx, ny = cy + dy, key = `${nx},${ny}`;
+      if (!visited.has(key) && isWalkable(nx, ny)) {
+        visited.add(key); parent.set(key, `${cx},${cy}`);
+        queue.push([nx, ny]);
+      }
+    }
+  }
+  return [];
+}
+
+const TOWER_HALF = CELL * 0.9;
+function collide(pos, radius) {
+  if (!maze) return;
+  const cx = Math.floor((pos.x + offset) / CELL);
+  const cy = Math.floor((pos.z + offset) / CELL);
+  for (let dx = -1; dx <= 1; dx++)
+    for (let dy = -1; dy <= 1; dy++) {
+      const nx = cx + dx, ny = cy + dy;
+      if (nx < 0 || ny < 0 || nx >= MAZE_SIZE || ny >= MAZE_SIZE) continue;
+      if (maze[nx][ny] === 1) {
+                const wx = nx * CELL - offset + CELL / 2;
+        const wz = ny * CELL - offset + CELL / 2;
+        const half = CELL / 2;
+        const closestX = Math.max(wx - half, Math.min(pos.x, wx + half));
+        const closestZ = Math.max(wz - half, Math.min(pos.z, wz + half));
+        const ddx = pos.x - closestX, ddz = pos.z - closestZ;
+        const d = Math.hypot(ddx, ddz);
+        if (d < radius) {
+          if (d === 0) pos.x += radius;
+          else { pos.x += (ddx / d) * (radius - d); pos.z += (ddz / d) * (radius - d); }
+        }
+      }
+    }
+  if (towerPos) {
+    const tdx = pos.x - towerPos.x, tdz = pos.z - towerPos.z;
+    const limit = TOWER_HALF + radius;
+    if (Math.abs(tdx) < limit && Math.abs(tdz) < limit) {
+      const overlapX = limit - Math.abs(tdx);
+      const overlapZ = limit - Math.abs(tdz);
+      if (overlapX < overlapZ) pos.x += Math.sign(tdx) * overlapX;
+      else                     pos.z += Math.sign(tdz) * overlapZ;
+    }
+  }
+  const lim = offset - 0.5;
+  pos.x = Math.max(-lim, Math.min(lim, pos.x));
+  pos.z = Math.max(-lim, Math.min(lim, pos.z));
+}
+
+const raycaster = new THREE.Raycaster();
+const scpHeadPos = new THREE.Vector3();
+function checkLookAtSCP() {
+  if (!scp || !walls) return false;
+  const dist = player.pos.distanceTo(scp.position);
+  if (dist > LOOK_TRIGGER_DIST) return false;
+  const dir = new THREE.Vector3(
+    -Math.sin(player.yaw) * Math.cos(player.pitch),
+     Math.sin(player.pitch),
+    -Math.cos(player.yaw) * Math.cos(player.pitch)
+  ).normalize();
+  scpHeadPos.set(scp.position.x, 2.6, scp.position.z);
+  const toSCP = scpHeadPos.clone().sub(player.pos).normalize();
+  if (dir.dot(toSCP) < 0.82) return false;
+  const rayDir = scpHeadPos.clone().sub(player.pos);
+  const rayLen = rayDir.length();
+  rayDir.normalize();
+  raycaster.set(player.pos, rayDir);
+  raycaster.far = rayLen;
+  return raycaster.intersectObject(walls).length === 0;
+}
+
+const MM_SIZE = 150;
+function drawMinimap() {
+  if (!minimapCtx || !maze) return;
+  const W = MM_SIZE, H = MM_SIZE;
+  const pxPerUnit = W / (MAZE_SIZE * CELL);
+  const toMap = (wx, wz) => ({ x: (wx + offset) * pxPerUnit, y: (wz + offset) * pxPerUnit });
+  minimapCtx.clearRect(0, 0, W, H);
+  minimapCtx.fillStyle = 'rgba(10, 10, 15, 0.85)';
+  minimapCtx.fillRect(0, 0, W, H);
+  minimapCtx.fillStyle = '#5a5a5a';
+  for (let x = 0; x < MAZE_SIZE; x++)
+    for (let y = 0; y < MAZE_SIZE; y++)
+      if (maze[x][y] === 1) {
+        const wx = x * CELL - offset;
+        const wz = y * CELL - offset;
+        minimapCtx.fillRect(wx * pxPerUnit, wz * pxPerUnit, CELL * pxPerUnit, CELL * pxPerUnit);
+      }
+  if (towerPos) {
+    const tw = toMap(towerPos.x, towerPos.z);
+    minimapCtx.fillStyle = '#c0c0c0';
+    minimapCtx.fillRect(tw.x - 4, tw.y - 4, 8, 8);
+    minimapCtx.strokeStyle = '#fff'; minimapCtx.lineWidth = 1;
+    minimapCtx.strokeRect(tw.x - 4, tw.y - 4, 8, 8);
+  }
+  if (exitPos) {
+    const ex = toMap(exitPos.x, exitPos.z);
+    const ePulse = 3.5 + Math.sin(clock.elapsedTime * 3) * 1.2;
+    minimapCtx.fillStyle = '#00ff88';
+    minimapCtx.beginPath(); minimapCtx.arc(ex.x, ex.y, ePulse, 0, Math.PI * 2); minimapCtx.fill();
+    minimapCtx.strokeStyle = '#88ffcc';
+    minimapCtx.beginPath(); minimapCtx.arc(ex.x, ex.y, ePulse + 2, 0, Math.PI * 2); minimapCtx.stroke();
+  }
+  for (const p of portals) {
+    const pm = toMap(p.position.x, p.position.z);
+    const hex = '#' + p.userData.color.toString(16).padStart(6, '0');
+    minimapCtx.fillStyle = hex;
+    minimapCtx.beginPath();
+    minimapCtx.arc(pm.x, pm.y, p.userData.isCorrect ? 3.5 : 2, 0, Math.PI * 2);
+    minimapCtx.fill();
+    if (p.userData.isCorrect) {
+      minimapCtx.strokeStyle = '#fff'; minimapCtx.lineWidth = 0.8; minimapCtx.stroke();
+    }
+  }
+  if (scp) {
+    const sp = toMap(scp.position.x, scp.position.z);
+    minimapCtx.fillStyle = scpState.mode === 'rage' ? '#ff0000' : '#aa2222';
+    minimapCtx.beginPath();
+    minimapCtx.arc(sp.x, sp.y, scpState.mode === 'rage' ? 4 : 2.8, 0, Math.PI * 2);
+    minimapCtx.fill();
+    if (scpState.mode === 'rage') {
+      minimapCtx.strokeStyle = '#ff5555'; minimapCtx.lineWidth = 1.5;
+      minimapCtx.beginPath();
+      minimapCtx.arc(sp.x, sp.y, 6 + Math.sin(clock.elapsedTime * 8) * 2, 0, Math.PI * 2);
+      minimapCtx.stroke();
+    }
+  }
+  const pl = toMap(player.pos.x, player.pos.z);
+  minimapCtx.save();
+  minimapCtx.translate(pl.x, pl.y);
+  minimapCtx.rotate(Math.PI - player.yaw);
+  minimapCtx.fillStyle = '#fff';
+  minimapCtx.beginPath();
+  minimapCtx.moveTo(0, -6); minimapCtx.lineTo(-4, 4); minimapCtx.lineTo(4, 4);
+  minimapCtx.closePath(); minimapCtx.fill();
+  minimapCtx.restore();
+  minimapCtx.strokeStyle = 'rgba(255,255,255,0.35)';
+  minimapCtx.lineWidth = 1;
+  minimapCtx.strokeRect(0.5, 0.5, W - 1, H - 1);
+}
+
+const flashEl = document.getElementById('flash');
+const winFlashEl = document.getElementById('winFlash');
+const statusEl = document.getElementById('status');
+
+function teleportPlayer(pos) {
+  player.pos.x = pos.x; player.pos.z = pos.z;
+  collide(player.pos, PLAYER_R);
+}
+
+function checkPortals() {
+  if (!player.alive || player.won) return;
+  for (const p of portals) {
+    const d = Math.hypot(player.pos.x - p.position.x, player.pos.z - p.position.z);
+    if (d < 1.5) {
+      if (p.userData.isCorrect) {
+        teleportPlayer(exitPos);
+        winFlashEl.style.opacity = '0.6';
+        setTimeout(() => winFlashEl.style.opacity = '0', 200);
+        statusEl.textContent = 'ПОРТАЛ ВЫВЕЛ К ВЫХОДУ!';
+        statusEl.style.color = '#00ff88';
+        playPortalSound(true); vibrate([30, 30, 30]);
+      } else {
+        const cell = freeCells[Math.floor(Math.random() * freeCells.length)];
+        teleportPlayer(new THREE.Vector3(cell.x, 1.7, cell.z));
+        flashEl.style.opacity = '0.5';
+        setTimeout(() => flashEl.style.opacity = '0', 200);
+        statusEl.textContent = 'ЛОЖНЫЙ ПОРТАЛ!';
+        statusEl.style.color = '#ffaa00';
+        playPortalSound(false); vibrate(80);
+        setTimeout(() => {
+          if (player.alive && !player.won) {
+            statusEl.textContent = 'SCP-096: спокоен';
+            statusEl.style.color = '#fff';
+          }
+        }, 1500);
+      }
+    }
+  }
+  const dExit = Math.hypot(player.pos.x - exitPos.x, player.pos.z - exitPos.z);
+  if (dExit < 2) {
+    player.won = true;
+    winFlashEl.style.opacity = '0.8';
+    statusEl.textContent = 'ВЫ СБЕЖАЛИ!';
+    statusEl.style.color = '#00ff88';
+    playWinSound(); vibrate([50, 30, 50, 30, 100]);
+    setTimeout(() => {
+      const ov = document.getElementById('overlay');
+      ov.classList.add('show');
+      ov.querySelector('h1').textContent = 'ВЫ СБЕЖАЛИ!';
+      ov.querySelector('h1').style.color = '#00ff88';
+    }, 900);
+  }
+}
+
+function updatePlayer(dt) {
+  if (!player.alive || player.won) return;
+  let forward = 0, strafe = 0;
+  if (keys['KeyW'] || keys['ArrowUp'])    forward += 1;
+  if (keys['KeyS'] || keys['ArrowDown'])  forward -= 1;
+  if (keys['KeyA'] || keys['ArrowLeft'])  strafe  -= 1;
+  if (keys['KeyD'] || keys['ArrowRight']) strafe  += 1;
+  forward += -joyVec.y;
+  strafe  +=  joyVec.x;
+  const len = Math.hypot(forward, strafe);
+  if (len > 1) { forward /= len; strafe /= len; }
+  const sin = Math.sin(player.yaw), cos = Math.cos(player.yaw);
+  player.pos.x += (-sin * forward + cos * strafe) * PLAYER_SPEED * dt;
+  player.pos.z += (-cos * forward - sin * strafe) * PLAYER_SPEED * dt;
+  collide(player.pos, PLAYER_R);
+  camera.position.set(player.pos.x, 1.7, player.pos.z);
+  camera.rotation.order = 'YXZ';
+  camera.rotation.y = player.yaw;
+  camera.rotation.x = player.pitch;
+}
+
+function updateSCP(dt) {
+  if (!scp || player.won) return;
+  const dist = player.pos.distanceTo(scp.position);
+  const looking = player.alive && checkLookAtSCP();
+  if (looking && scpState.mode === 'idle') {
+    scpState.mode = 'rage';
+    scpState.rageTimer = 8;
+    flashEl.style.opacity = '0.6';
+    setTimeout(() => flashEl.style.opacity = '0', 150);
+    statusEl.textContent = 'SCP-096: ЯРОСТЬ!';
+    statusEl.style.color = '#ff4444';
+    playScream(); setAmbientDucked(true);
+    vibrate([200, 80, 200, 80, 300]);
+  }
+  if (scpState.mode === 'rage') {
+    scpState.rageTimer -= dt;
+    if (scpState.rageTimer <= 0 && dist > 15) {
+      scpState.mode = 'idle';
+      statusEl.textContent = 'SCP-096: спокоен';
+      statusEl.style.color = '#fff';
+      setAmbientDucked(false);
+    }
+  }
+  const speed = scpState.mode === 'rage' ? SCP_SPEED_RAGE : SCP_SPEED_IDLE;
+  scpState.pathTimer -= dt;
+  if (scpState.pathTimer <= 0 || scpState.path.length === 0) {
+    scpState.pathTimer = 0.5;
+    scpState.path = findPath(scp.position, player.pos);
+  }
+  if (scpState.path.length > 0) {
+    const target = scpState.path[0];
+    const toTarget = target.clone().sub(scp.position);
+    toTarget.y = 0;
+    const d = toTarget.length();
+    if (d < 0.3) scpState.path.shift();
+    else {
+      toTarget.normalize();
+      scp.position.x += toTarget.x * speed * dt;
+      scp.position.z += toTarget.z * speed * dt;
+      scp.rotation.y = Math.atan2(toTarget.x, toTarget.z);
+    }
+  }
+  const t = clock.elapsedTime;
+  const isRage = scpState.mode === 'rage';
+  const walkSpeed = isRage ? 14 : 2.5;
+  const phase = t * walkSpeed;
+  scp.position.y = Math.abs(Math.sin(phase)) * (isRage ? 0.18 : 0.05);
+  scp.rotation.x = isRage ? -0.22 : -0.08;
+  if (scp.userData.arms) {
+    scp.userData.arms.forEach((arm, i) => {
+      const sign = i === 0 ? 1 : -1;
+      if (isRage) {
+        arm.rotation.x = Math.sin(phase + (i === 0 ? 0 : Math.PI)) * 0.9 - 0.4;
+        arm.rotation.z = sign * 0.15;
+      } else {
+        arm.rotation.x = Math.sin(phase * 0.4) * 0.08;
+        arm.rotation.z = sign * 0.05;
+      }
+    });
+  }
+  if (scp.userData.headGroup) {
+    scp.userData.headGroup.rotation.y = Math.sin(t * (isRage ? 4 : 0.6)) * 0.35;
+    scp.userData.headGroup.rotation.x = isRage ? 0.2 : 0;
+  }
+  if (dist < 1.5 && player.alive) {
+    player.alive = false;
+    flashEl.style.opacity = '1';
+    statusEl.textContent = 'ВЫ ПОЙМАНЫ';
+    statusEl.style.color = '#ff0000';
+    playDeathSound();
+    vibrate([400, 100, 400, 100, 800]);
+    setTimeout(() => {
+      const ov = document.getElementById('overlay');
+      ov.classList.add('show');
+      ov.querySelector('h1').textContent = 'SCP-096 ПОЙМАЛ ВАС';
+      ov.querySelector('h1').style.color = '#ff4444';
+    }, 1200);
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if (gameStarted && worldReady) {
+    updatePlayer(dt);
+    checkPortals();
+    updateSCP(dt);
+    const t = clock.elapsedTime;
+    for (const p of portals) {
+      p.userData.ring.rotation.z = t * 2;
+      p.userData.core.material.opacity = 0.3 + Math.sin(t * 4) * 0.15;
+      p.userData.light.intensity = 1.5 + Math.sin(t * 4) * 0.5;
+    }
+    if (tower) {
+      const blink = Math.sin(t * 3) > 0.5 ? 1 : 0.15;
+      tower.beacon.material.emissiveIntensity = 3 * blink;
+      tower.beaconLight.intensity = 2 * blink;
+    }
+    if (exitRing) {
+      exitRing.material.emissiveIntensity = 1.5 + Math.sin(t * 2) * 1.0;
+      exitBeam.material.opacity = 0.15 + Math.sin(t * 2) * 0.08;
+      exitPad.material.opacity  = 0.3 + Math.sin(t * 2) * 0.1;
+    }
+    drawMinimap();
+  }
+  if (renderer && scene && camera) renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+  if (!camera) return;
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  if (renderer) renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
