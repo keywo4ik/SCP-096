@@ -78,7 +78,9 @@
       <div class="desc" style="color:#ff4444">У тебя есть 5 минут. Не успеешь — он придет за тобой.</div>
     </div>
   </div>
+<a href="download.html" style="margin-top: 25px; color: #00ff88; text-decoration: none; font-size: 14px; border-bottom: 1px dashed #00ff88; pointer-events: auto;">📱 Скачать APK для телефона</a>
 
+</div>
   <div id="screen-load" class="screen hidden">
     <h1 style="color:#ff8844">ЗАГРУЗКА</h1>
     <div id="loadBarWrap"><div id="loadBar"></div></div>
@@ -952,7 +954,79 @@
       // Ловим игрока
       if (dist < 1.8 && player.alive) triggerJumpscare(false);
     }
+    // ================== ОТРИСОВКА МИНИКАРТЫ ==================
+    const MM_SIZE = 150;
+    function drawMinimap() {
+      if (!minimapCtx || !maze) return;
+      
+      const W = MM_SIZE, H = MM_SIZE;
+      const pxPerUnit = W / (MAZE_SIZE * CELL);
+      const toMap = (wx, wz) => ({ 
+        x: (wx + offset) * pxPerUnit, 
+        y: (wz + offset) * pxPerUnit 
+      });
 
+      minimapCtx.clearRect(0, 0, W, H);
+      minimapCtx.fillStyle = 'rgba(10, 10, 15, 0.85)';
+      minimapCtx.fillRect(0, 0, W, H);
+
+      // Стены
+      minimapCtx.fillStyle = '#5a5a5a';
+      for (let x = 0; x < MAZE_SIZE; x++) {
+        for (let y = 0; y < MAZE_SIZE; y++) {
+          if (maze[x][y] === 1) {
+            const wx = x * CELL - offset;
+            const wz = y * CELL - offset;
+            minimapCtx.fillRect(wx * pxPerUnit, wz * pxPerUnit, CELL * pxPerUnit, CELL * pxPerUnit);
+          }
+        }
+      }
+
+      // Вышка
+      if (towerPos) {
+        const tw = toMap(towerPos.x, towerPos.z);
+        minimapCtx.fillStyle = '#c0c0c0';
+        minimapCtx.fillRect(tw.x - 4, tw.y - 4, 8, 8);
+      }
+
+      // Выход
+      if (exitPos) {
+        const ex = toMap(exitPos.x, exitPos.z);
+        const ePulse = 3.5 + Math.sin(clock.elapsedTime * 3) * 1.2;
+        minimapCtx.fillStyle = '#00ff88';
+        minimapCtx.beginPath(); minimapCtx.arc(ex.x, ex.y, ePulse, 0, Math.PI * 2); minimapCtx.fill();
+      }
+
+      // Порталы
+      for (const p of portals) {
+        const pm = toMap(p.position.x, p.position.z);
+        const hex = '#' + p.userData.color.toString(16).padStart(6, '0');
+        minimapCtx.fillStyle = hex;
+        minimapCtx.beginPath();
+        minimapCtx.arc(pm.x, pm.y, p.userData.isCorrect ? 3.5 : 2, 0, Math.PI * 2);
+        minimapCtx.fill();
+      }
+
+      // SCP-096
+      if (scp) {
+        const sp = toMap(scp.position.x, scp.position.z);
+        minimapCtx.fillStyle = scpState.mode === 'rage' ? '#ff0000' : '#aa2222';
+        minimapCtx.beginPath();
+        minimapCtx.arc(sp.x, sp.y, scpState.mode === 'rage' ? 4 : 2.8, 0, Math.PI * 2);
+        minimapCtx.fill();
+      }
+
+      // Игрок (стрелочка)
+      const pl = toMap(player.pos.x, player.pos.z);
+      minimapCtx.save();
+      minimapCtx.translate(pl.x, pl.y);
+      minimapCtx.rotate(Math.PI - player.yaw);
+      minimapCtx.fillStyle = '#fff';
+      minimapCtx.beginPath();
+      minimapCtx.moveTo(0, -6); minimapCtx.lineTo(-4, 4); minimapCtx.lineTo(4, 4);
+      minimapCtx.closePath(); minimapCtx.fill();
+      minimapCtx.restore();
+    }
     // ================== ПРОВЕРКА ПОРТАЛОВ И БАЗЫ ==================
     function checkPortals() {
       if (!player.alive || player.won || jumpscareActive) return;
@@ -1030,6 +1104,8 @@
             tower.group.position.y += dt * 15;
             exitGroup.position.y += dt * 15;
           }
+          drawMinimap(); 
+          
         }
         
         if (renderer && scene && camera) renderer.render(scene, camera);
