@@ -114,7 +114,7 @@
     const LOOK_TRIGGER_DIST = 30;
     const START_POS = new THREE.Vector3(0, 1.7, 0);
     const TOWER_CELL = { x: 19, y: 19 };
-    const EXIT_CELL = { x: 17, y: 17 };
+    const EXIT_CELL = { x: 16, y: 19 };
 
     // ================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==================
     let renderer, scene, camera, maze, offset, walls, floor, tower, exitGroup, exitRing, exitPad, exitBeam, towerPos, exitPos;
@@ -570,9 +570,16 @@
     }
 
     function stepMinimap() {
-      minimapCanvas = document.getElementById('minimap');
-      minimapCtx = minimapCanvas.getContext('2d');
-    }
+  minimapCanvas = document.getElementById('minimap');
+  minimapCtx = minimapCanvas.getContext('2d');
+  
+  // Задаем правильные размеры канвасу (с учетом Retina-экранов)
+  const MM_SIZE = 150;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  minimapCanvas.width = MM_SIZE * dpr;
+  minimapCanvas.height = MM_SIZE * dpr;
+  minimapCtx.scale(dpr, dpr);
+  }
 
     async function loadWorld(mode) {
       gameMode = mode;
@@ -1063,19 +1070,21 @@
         }
       }
 
-      // Проверка побега на базу (только в Харде)
-      if (gameMode === 'hard' && !player.won && !jumpscareActive) {
-        const dExit = Math.hypot(player.pos.x - exitPos.x, player.pos.z - exitPos.z);
-        if (dExit < 2.5 && !baseFlying) {
-          player.won = true;
-          baseFlying = true;
-          clearInterval(timerInterval);
-          document.getElementById('status').textContent = 'ПОБЕГ!';
-          document.getElementById('status').style.color = '#00ff88';
-          setTimeout(() => triggerJumpscare(true), 1000);
-        }
-      }
+      // Проверка побега на базу (работает в обоих режимах)
+if (!player.won && !jumpscareActive) {
+  const dExit = Math.hypot(player.pos.x - exitPos.x, player.pos.z - exitPos.z);
+  if (dExit < 2.5) {
+    player.won = true;
+    if (gameMode === 'hard') {
+      baseFlying = true;
+      clearInterval(timerInterval);
     }
+    document.getElementById('status').textContent = 'ПОБЕГ!';
+    document.getElementById('status').style.color = '#00ff88';
+    setTimeout(() => triggerJumpscare(true), 1000);
+  }
+ }
+}
 
     // ================== ГЛАВНЫЙ ЦИКЛ ==================
     function animate() {
