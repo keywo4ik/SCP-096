@@ -4,7 +4,7 @@
 
 ## 🎮 Играть
 
-**[Открыть игру →](https://keywo4ik.github.io/scp096/)**
+**[Открыть игру →](https://keywo4ik.github.io/SCP-096/)**
 
 ## 🕹 Управление
 
