@@ -1,0 +1,12 @@
+{
+  "background_color": "#ff0808",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "SCP-096",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "SCP-096 labyrinth",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "id": "096096"
+}
