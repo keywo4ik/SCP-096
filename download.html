@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Скачать SCP-096 — Лабиринт</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background-color: #0a0a0f;
+    color: #fff;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 20px;
+    background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #0a0a0f 70%);
+  }
+  .logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 0 30px rgba(255, 68, 68, 0.4);
+    object-fit: cover;
+    border: 2px solid #ff4444;
+  }
+  h1 {
+    color: #ff4444;
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  p {
+    color: #aaa;
+    font-size: 14px;
+    max-width: 400px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  .btn-download {
+    background-color: #ff4444;
+    color: #fff;
+    text-decoration: none;
+    padding: 16px 40px;
+    font-size: 18px;
+    font-family: monospace;
+    border-radius: 8px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+  }
+  .btn-download:hover {
+    background-color: #cc0000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
+  }
+  .btn-download:active {
+    transform: translateY(0);
+  }
+  .btn-play {
+    margin-top: 20px;
+    background: transparent;
+    color: #00ff88;
+    border: 1px solid #00ff88;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-family: monospace;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-play:hover {
+    background: rgba(0, 255, 136, 0.1);
+  }
+  .info {
+    margin-top: 40px;
+    font-size: 12px;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Если ваша иконка называется icon.png, оставьте так. Если нет - поменяйте src -->
+  <img src="icon.png" alt="SCP Logo" class="logo">
+  
+  <h1>SCP-096 — Лабиринт</h1>
+  <p>Скачайте мобильную версию игры. Не смотрите на него. Ищите выход.</p>
+
+  <!-- ВАЖНО: Замените ссылку в href на ту, что вы скопировали из GitHub Releases! -->
+  <a href="https://github.com/keywo4ik/SCP-096/releases/download/v1.0.0/app-release.apk" class="btn-download">
+    📥 Скачать APK
+  </a>
+
+  <!-- Ссылка на браузерную версию -->
+  <a href="index.html" class="btn-play">
+    ▶ Играть в браузере
+  </a>
+
+  <div class="info">
+    Для установки разрешите установку из неизвестных источников в настройках Android.
+  </div>
+
+</body>
+</html>
