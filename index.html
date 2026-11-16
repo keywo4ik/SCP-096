@@ -47,28 +47,10 @@
     #redScreen { position: fixed; inset: 0; background: rgba(255,0,0,0.6); opacity: 0; pointer-events: none; transition: opacity 1s; z-index: 6; }
     #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity 0.1s; z-index: 7; }
         /* Контейнер для режимов */
-    .mode-container {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-top: 20px;
-      width: 100%;
-      max-width: 320px;
-      pointer-events: auto;
-    }
+    .mode-container {display: flex; flex-direction: column; gap: 15px; margin-top: 20px; width: 100%; max-width: 320px; pointer-events: auto;}
 
     /* Карточка режима */
-    .mode-card {
-      position: relative;
-      width: 100%;
-      height: 140px;
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 2px solid #333;
-      transition: transform 0.2s, box-shadow 0.2s;
-      background-color: #1a1a1a;
-    }
+    .mode-card {position: relative; width: 100%; height: 140px; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid #333; transition: transform 0.2s, box-shadow 0.2s; background-color: #1a1a1a;}
 
     /* Эффект при наведении/нажатии */
     .mode-card:hover { transform: scale(1.03); }
@@ -79,47 +61,18 @@
     #btnHard:hover { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); border-color: #ff0000; }
 
     /* Фон карточки (сюда встанут твои скриншоты) */
-    .mode-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      z-index: 1;
-      opacity: 0.8;
-    }
+    .mode-bg {position: absolute; inset: 0; background-size: cover; background-position: center; z-index: 1; opacity: 0.8;}
     
     /* Если картинок нет, будет просто градиент */
-    .classic-bg { 
-      background-image: linear-gradient(135deg, rgba(0,170,255,0.2), rgba(0,0,0,0.9)), url('classic_cover.jpg'); 
-    }
-    .hard-bg { 
-      background-image: linear-gradient(135deg, rgba(255,0,0,0.2), rgba(0,0,0,0.9)), url('hard_cover.jpg'); 
-    }
+    .classic-bg {background-image: linear-gradient(135deg, rgba(0,170,255,0.2), rgba(0,0,0,0.9)), url('classic_cover.jpg');}
+    .hard-bg {background-image: linear-gradient(135deg, rgba(255,0,0,0.2), rgba(0,0,0,0.9)), url('hard_cover.jpg');}
 
     /* Текст на карточке */
-    .mode-content {
-      position: relative;
-      z-index: 2;
-      padding: 15px;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      text-align: left;
-      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
-    }
+    .mode-content {position: relative; z-index: 2; padding: 15px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; text-align: left; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);}
 
-    .mode-content h2 {
-      margin: 0;
-      font-size: 22px;
-      letter-spacing: 2px;
-    }
+    .mode-content h2 {margin: 0; font-size: 22px; letter-spacing: 2px;}
 
-    .mode-content p {
-      margin: 5px 0 0;
-      font-size: 12px;
-      color: #ccc;
-      }
+    .mode-content p { margin: 5px 0 0; font-size: 12px; color: #ccc;}
   </style>
 </head>
 <body>
@@ -174,7 +127,7 @@
     <div id="loadBarWrap"><div id="loadBar"></div></div>
     <div id="loadStep">Инициализация...</div>
   </div>
-
+    
   <div id="screen-ready" class="screen hidden">
     <h1 style="color:#00ff88">ГОТОВО</h1>
     <button id="enterBtn" type="button">ВОЙТИ В ЛАБИРИНТ</button>
